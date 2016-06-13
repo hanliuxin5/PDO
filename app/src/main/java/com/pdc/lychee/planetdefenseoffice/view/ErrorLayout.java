@@ -13,7 +13,7 @@ import com.pdc.lychee.planetdefenseoffice.R;
 /**
  * Created by thanatos on 15-9-22.
  */
-public class ErrorLayout extends FrameLayout{
+public class ErrorLayout extends FrameLayout {
 
     public static final int HIDE = 0;
     public static final int LOADING = 1;
@@ -58,7 +58,7 @@ public class ErrorLayout extends FrameLayout{
 
     public void setState(int state) {
         mState = state;
-        switch (state){
+        switch (state) {
             case HIDE:
                 setVisibility(GONE);
                 break;
@@ -90,17 +90,17 @@ public class ErrorLayout extends FrameLayout{
             case EMPTY_DATA:
                 setVisibility(VISIBLE);
                 vLoadFailure.setVisibility(VISIBLE);
-                vLoadFailure.setText("没有收集到任何数据");
+                vLoadFailure.setText("没有接收到任何数据");
                 vText.setVisibility(GONE);
                 probar.setVisibility(GONE);
         }
     }
 
-    public int getState(){
+    public int getState() {
         return mState;
     }
 
-    public void setOnActiveClickListener(OnActiveClickListener listener){
+    public void setOnActiveClickListener(OnActiveClickListener listener) {
         this.listener = listener;
     }
 

@@ -13,7 +13,7 @@ import butterknife.Bind;
 /**
  * Created by lychee on 2016/5/5.
  */
-public abstract class BaseHoldBackActivity extends BaseActivity {
+public class BaseHoldBackActivity extends BaseActivity {
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.contentFrame)
@@ -23,15 +23,13 @@ public abstract class BaseHoldBackActivity extends BaseActivity {
     private String mSubTitle = "";
 
     @Override
-    protected int setContentViewResId() {
+    protected int setContentView() {
         return R.layout.base_activity_holdback;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentViewResId();
-
     }
 
     /**

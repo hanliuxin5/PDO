@@ -3,16 +3,15 @@ package com.pdc.lychee.planetdefenseoffice.base.activity;
 import android.os.Bundle;
 
 import com.pdc.lychee.planetdefenseoffice.manager.DeviceManager;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 
 /**
  * Created by lychee on 2016/5/5.
  */
-public abstract class BaseActivity extends BaseRxActivity {
-    @Override
-    protected int setContentViewResId() {
-        return setContentView();
-    }
+public abstract class BaseActivity extends RxAppCompatActivity {
+
+    protected abstract int setContentView();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +24,6 @@ public abstract class BaseActivity extends BaseRxActivity {
         super.onResume();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
     protected void onPause() {
@@ -43,5 +38,8 @@ public abstract class BaseActivity extends BaseRxActivity {
         super.onStop();
     }
 
-    protected abstract int setContentView();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
