@@ -38,7 +38,7 @@ public class ErrorLayout extends FrameLayout {
     }
 
     private void initView() {
-        View view = View.inflate(getContext(), R.layout.view_error_layout, null);
+        View view = View.inflate(getContext(), R.layout.base_error_layout, null);
 
         probar = (ProgressBar) view.findViewById(R.id.progressbar);
         vText = (TextView) view.findViewById(R.id.state_text);

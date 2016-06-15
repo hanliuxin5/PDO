@@ -1,9 +1,20 @@
 <resources>
-    <string name="app_name">PlanetDefenseOffice</string>
+    <string name="app_name">PDO</string>
 
+    <string name="planet_defense_outpost">行星防御哨</string>
+    <string name="mars_exploration">火星前瞻</string>
+    <string name="deep_space_exploration">深空探索</string>
+    <string name="settings">设置</string>
+    <string name="system">系统</string>
+
+
+    <!--列表刷新-->
     <string name="loading">加载中...</string>
     <string name="load_failed">加载失败</string>
     <string name="invalid_network">无效的网络</string>
     <string name="load_no_more">没有更多了</string>
     <string name="refreshing">刷新中</string>
+
+    <!--test_string-->
+    <string name="string_test">地球的未来掌握在你们手中 —— 大笔哥"</string>
 </resources>

@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 
-import com.trello.rxlifecycle.components.support.RxFragment;
-
 /**
  * Created by lychee on 2016/5/12.
  */
-public class BaseFragment extends RxFragment {
+public class BaseFragment extends BaseRxFragment {
     public Context mContext;
     public Resources mRes;
 

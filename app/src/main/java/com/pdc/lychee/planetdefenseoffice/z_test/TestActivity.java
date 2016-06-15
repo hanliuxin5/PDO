@@ -1,18 +1,27 @@
-package com.pdc.lychee.planetdefenseoffice;
+package com.pdc.lychee.planetdefenseoffice.z_test;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.pdc.lychee.planetdefenseoffice.z_test.TestBean;
+import com.pdc.lychee.planetdefenseoffice.R;
 
-public class MainActivity extends AppCompatActivity {
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+public class TestActivity extends AppCompatActivity {
+
+    @Bind(R.id.test_tc)
+    TextView testTc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.test_activity_main);
+        ButterKnife.bind(this);
+        testTc.setText(R.string.string_test);
         String jsonStr = "{\n" +
                 "\n" +
                 "    \"links\": {\n" +

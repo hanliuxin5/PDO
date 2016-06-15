@@ -3,13 +3,12 @@ package com.pdc.lychee.planetdefenseoffice.base.activity;
 import android.os.Bundle;
 
 import com.pdc.lychee.planetdefenseoffice.manager.DeviceManager;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 
 /**
  * Created by lychee on 2016/5/5.
  */
-public abstract class BaseActivity extends RxAppCompatActivity {
+public abstract class BaseActivity extends BaseRxActivity {
 
     protected abstract int setContentView();
 

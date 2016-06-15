@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="transparent_colorAccent">#BBFF4081</color>
-
+    <color name="colorPrimary">#FF980D</color>
+    <color name="colorPrimaryDark">#FFCC8D</color>
+    <color name="colorAccent">#F57C0D</color>
+    <color name="color_co1">#FFF3ED</color>
     <!--base color setting-->
     <color name="transparent">#00000000</color>
     <!-- swipe refresh color -->
@@ -12,4 +11,11 @@
     <color name="swipe_refresh_second">#ffffbb33</color>
     <color name="swipe_refresh_third">#ffff4444</color>
     <color name="swipe_refresh_four">#ffaa66cc</color>
+
+    <!--test color-->
+    <color name="transparent_colorAccent">#BBFF4081</color>
+    <color name="color_test1">#FF980D</color>
+    <color name="color_test2">#FFCC8D</color>
+    <color name="color_test3">#F57C0D</color>
+    <color name="color_test4">#FFF3ED</color>
 </resources>
