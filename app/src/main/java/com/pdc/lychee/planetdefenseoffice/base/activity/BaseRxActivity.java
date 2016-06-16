@@ -16,7 +16,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * Created by lychee on 2016/5/16.
  */
-public abstract class BaseRxActivity extends SupportActivity implements ActivityLifecycleProvider {
+public abstract  class BaseRxActivity extends SupportActivity implements ActivityLifecycleProvider {
     private final BehaviorSubject<ActivityEvent> lifecycleSubject = BehaviorSubject.create();
 
     @Override
