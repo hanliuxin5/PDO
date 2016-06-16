@@ -16,7 +16,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * Created by lychee on 2016/5/16.
  */
-public class BaseRxFragment extends SupportFragment implements FragmentLifecycleProvider {
+public abstract class BaseRxFragment extends SupportFragment implements FragmentLifecycleProvider {
     private final BehaviorSubject<FragmentEvent> lifecycleSubject = BehaviorSubject.create();
 
     @Override

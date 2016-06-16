@@ -7,7 +7,7 @@ import android.os.Bundle;
 /**
  * Created by lychee on 2016/5/12.
  */
-public class BaseFragment extends BaseRxFragment {
+public abstract class BaseFragment extends BaseRxFragment {
     public Context mContext;
     public Resources mRes;
 

@@ -6,7 +6,8 @@
     <string name="deep_space_exploration">深空探索</string>
     <string name="settings">设置</string>
     <string name="system">系统</string>
-
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--列表刷新-->
     <string name="loading">加载中...</string>
