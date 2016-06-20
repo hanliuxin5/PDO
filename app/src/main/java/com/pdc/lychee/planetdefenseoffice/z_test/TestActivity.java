@@ -20,6 +20,7 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_activity_main);
+
         ButterKnife.bind(this);
         testTc.setText(R.string.string_test);
         String jsonStr = "{\n" +

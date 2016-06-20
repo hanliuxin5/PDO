@@ -6,7 +6,7 @@ import com.pdc.lychee.planetdefenseoffice.base.BaseView;
 /**
  * Created by lychee on 2016/6/16.
  */
-public class MainContract {
+public interface MainContract {
      interface View extends BaseView<Presenter> {
         void showOffice(int index);
 

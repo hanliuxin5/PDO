@@ -10,5 +10,6 @@ public class Appcation extends Application {
     public void onCreate() {
         super.onCreate();
 //        LeakCanary.install(this);
+
     }
 }
