@@ -1,12 +1,14 @@
 package com.pdc.lychee.planetdefenseoffice.module;
 
+import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
+
 /**
  * Created by lychee on 2016/6/16.
  */
-public class MainPrsenter implements MainContract.Presenter {
+public class MainPresenter implements MainContract.Presenter {
     private MainContract.View mMainView;
 
-    public MainPrsenter(MainContract.View mMainView) {
+    public MainPresenter(MainContract.View mMainView) {
         this.mMainView = mMainView;
     }
 
@@ -17,6 +19,6 @@ public class MainPrsenter implements MainContract.Presenter {
 
     @Override
     public void firstPresenter() {
-
+        LogUtil.i("firstPresenter");
     }
 }

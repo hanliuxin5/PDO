@@ -5,21 +5,19 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by lychee on 2016/6/16.
  */
-public class APOD {
+public class DeepSpaceBean {
+
 
     /**
-     * copyright : Alex Conu
-     * date : 2016-06-16
-     * explanation : The Aurora Borealis or northern lights are familiar visitors to night skies above the village of Reine in the Lofoten Islands, Norway, planet Earth. In this scene, captured from a mountaintop camp site, the auroral curtains do seem to create an eerie tension with the coastal lights though. A modern perspective on the world at night, the stunning image was chosen as the over all winner in The World at Night's 2016 International Earth and Sky Photo Contest. Selections were made from over 900 entries highlighting the beauty of the night sky and its battle with light pollution.
-     * hdurl : http://apod.nasa.gov/apod/image/1606/TWAN6108-03LConu.jpg
+     * date : 2016-06-21
+     * explanation : In the center of this serene stellar swirl is likely a harrowing black-hole beast. The surrounding swirl sweeps around billions of stars which are highlighted by the brightest and bluest. The breadth and beauty of the display give the swirl the designation of a grand design spiral galaxy. The central beast shows evidence that it is a supermassive black hole about 10 million times the mass of our Sun. This ferocious creature devours stars and gas and is surrounded by a spinning moat of hot plasma that emits blasts of X-rays. The central violent activity gives it the designation of a Seyfert galaxy. Together, this beauty and beast are cataloged as NGC 6814 and have been appearing together toward the constellation of the Eagle (Aquila) for roughly the past billion years.
+     * hdurl : http://apod.nasa.gov/apod/image/1606/NGC6814_hubble_3970.jpg
      * media_type : image
      * service_version : v1
-     * title : Northern Lights above Lofoten
-     * url : http://apod.nasa.gov/apod/image/1606/TWAN6108-03LConu.jpg
+     * title : NGC 6814: Grand Design Spiral Galaxy from Hubble
+     * url : http://apod.nasa.gov/apod/image/1606/NGC6814_hubble_960.jpg
      */
 
-    @SerializedName("copyright")
-    private String copyright;
     @SerializedName("date")
     private String date;
     @SerializedName("explanation")
@@ -34,14 +32,6 @@ public class APOD {
     private String title;
     @SerializedName("url")
     private String url;
-
-    public String getCopyright() {
-        return copyright;
-    }
-
-    public void setCopyright(String copyright) {
-        this.copyright = copyright;
-    }
 
     public String getDate() {
         return date;

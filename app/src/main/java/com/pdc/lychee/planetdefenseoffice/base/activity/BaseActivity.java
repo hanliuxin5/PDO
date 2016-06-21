@@ -10,6 +10,10 @@ import com.pdc.lychee.planetdefenseoffice.manager.DeviceManager;
  */
 public abstract class BaseActivity extends BaseRxActivity {
 
+    public int mState = STATE_NONE;
+    public static final int STATE_NONE = 0;
+    public static final int STATE_REFRESHING = 1;
+
     protected abstract int setContentView();
 
     @Override

@@ -24,7 +24,7 @@ public class ErrorLayout extends FrameLayout {
     private ProgressBar probar;
     private TextView vText;
     private TextView vLoadFailure;
-    private OnFaildClickListener listener;
+    private OnFailedClickListener listener;
     private int mState = HIDE;
 
     public ErrorLayout(Context context) {
@@ -48,7 +48,7 @@ public class ErrorLayout extends FrameLayout {
             @Override
             public void onClick(View v) {
                 if (listener != null)
-                    listener.onLoadFaildClick();
+                    listener.onLoadFailedClick();
             }
         });
 
@@ -100,14 +100,14 @@ public class ErrorLayout extends FrameLayout {
         return mState;
     }
 
-    public void setOnFaildClickListener(OnFaildClickListener listener) {
+    public void setOnFailedClickListener(OnFailedClickListener listener) {
         this.listener = listener;
     }
 
     /**
      * 点击加载失败的图片重新加载
      */
-    public interface OnFaildClickListener {
-        void onLoadFaildClick();
+    public interface OnFailedClickListener {
+        void onLoadFailedClick();
     }
 }

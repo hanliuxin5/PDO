@@ -9,9 +9,9 @@ import com.pdc.lychee.planetdefenseoffice.base.BaseView;
 public interface DeepSpaceMainContact {
 
     interface View extends BaseView<Presenter> {
-        void showDP();
+        void showDP(DeepSpaceBean deepSpaceBean);
 
-        void showLoding();
+        void showLoading();
 
         void showLoadError();
 
@@ -21,13 +21,13 @@ public interface DeepSpaceMainContact {
 
         void showDPDetails();
 
-        void showPopUpMenu();
+        void showNoMoreDP();
 
-        boolean isActive();
+
 
     }
 
     interface Presenter extends BasePresenter {
-        void loadDP();
+        void loadDP(String date, boolean hd);
     }
 }

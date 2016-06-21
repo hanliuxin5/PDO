@@ -8,7 +8,7 @@ import com.pdc.lychee.planetdefenseoffice.base.BaseView;
  */
 public interface MainContract {
      interface View extends BaseView<Presenter> {
-        void showOffice(int index);
+        void showOffice(int resId);
 
         void showNetWorkingError();
 

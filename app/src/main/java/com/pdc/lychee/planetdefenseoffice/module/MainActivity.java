@@ -11,8 +11,10 @@ import android.widget.LinearLayout;
 
 import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.base.activity.BaseActivity;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.DeepSpaceMainFragment;
 
 import butterknife.Bind;
+import me.yokeyword.fragmentation.SupportFragment;
 
 /**
  * Created by lychee on 2016/6/15.
@@ -25,7 +27,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
-    private MainPrsenter mainPrsenter;
+    private MainContract.Presenter mainPrsenter;
 
     @Override
     protected int setContentView() {
@@ -35,12 +37,21 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            loadRootFragment(R.id.fl_container, DeepSpaceMainFragment.newInstance());
+        }
         initView();
+        mainPrsenter = new MainPresenter(this);
     }
 
     private void initView() {
+        navView = (NavigationView) findViewById(R.id.nav_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
         navView.setNavigationItemSelectedListener(this);
         navView.setCheckedItem(R.id.nav_pdo);
+        navView.setCheckedItem(R.id.nav_deep);
 
         LinearLayout llNavHeader = (LinearLayout) navView.getHeaderView(0);
         llNavHeader.setOnClickListener(new View.OnClickListener() {
@@ -53,12 +64,27 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
 
     @Override
     public void setPresenter(MainContract.Presenter presenter) {
-
+        if (presenter != null)
+            mainPrsenter = presenter;
     }
 
     @Override
-    public void showOffice(int index) {
-
+    public void showOffice(int resId) {
+        if (resId == R.id.nav_deep) {
+            mainPrsenter.start();
+            DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
+            if (deepSpaceMainFragment == null) {
+                popTo(DeepSpaceMainFragment.class, false, new Runnable() {
+                    @Override
+                    public void run() {
+                        start(DeepSpaceMainFragment.newInstance());
+                    }
+                });
+            } else {
+                // 如果已经在栈内,则以SingleTask模式start
+                start(deepSpaceMainFragment, SupportFragment.SINGLETASK);
+            }
+        }
     }
 
     @Override
@@ -73,17 +99,24 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
 
     @Override
     public void openDrawer() {
-
+        if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 
     @Override
     public void closeDrawer() {
-
+        if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
 
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
+        drawerLayout.closeDrawer(GravityCompat.START);
+        int id = item.getItemId();
+        showOffice(id);
+        return true;
     }
 }
