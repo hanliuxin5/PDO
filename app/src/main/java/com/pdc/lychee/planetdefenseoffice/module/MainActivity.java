@@ -14,19 +14,21 @@ import com.pdc.lychee.planetdefenseoffice.base.activity.BaseActivity;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.DeepSpaceMainFragment;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import me.yokeyword.fragmentation.SupportFragment;
 
 /**
  * Created by lychee on 2016/6/15.
  */
 public class MainActivity extends BaseActivity implements MainContract.View, NavigationView.OnNavigationItemSelectedListener {
+
+
     @Bind(R.id.fl_container)
     FrameLayout flContainer;
     @Bind(R.id.nav_view)
     NavigationView navView;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
     private MainContract.Presenter mainPrsenter;
 
     @Override
@@ -37,20 +39,16 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        mainPrsenter = new MainPresenter(this);
         if (savedInstanceState == null) {
             loadRootFragment(R.id.fl_container, DeepSpaceMainFragment.newInstance());
         }
         initView();
-        mainPrsenter = new MainPresenter(this);
     }
 
     private void initView() {
-        navView = (NavigationView) findViewById(R.id.nav_view);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-
         navView.setNavigationItemSelectedListener(this);
-        navView.setCheckedItem(R.id.nav_pdo);
         navView.setCheckedItem(R.id.nav_deep);
 
         LinearLayout llNavHeader = (LinearLayout) navView.getHeaderView(0);
