@@ -1,10 +1,8 @@
 package com.pdc.lychee.planetdefenseoffice.retrofit;
 
-import com.google.gson.JsonParseException;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 
 import rx.Observable;
-import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 
 /**
@@ -17,28 +15,31 @@ public class RequestUncommonTransformer implements Observable.Transformer<DeepSp
             @Override
             public DeepSpaceBean call(DeepSpaceBean deepSpaceBean) {
                 if (deepSpaceBean.getCode() == 400) {
-                    throw Exceptions.propagate(new JsonParseException("400"));
+                    deepSpaceBean.setExplanation("（机密）无权访问当前日期！");
+                    return deepSpaceBean;
                 } else if (deepSpaceBean.getCode() == 500) {
-                    throw Exceptions.propagate(new JsonParseException("500"));
+                    deepSpaceBean.setExplanation("（错误）因为相对论");
+                    return deepSpaceBean;
                 }
+//                deepSpaceBean.setExplanation("没啥错误，就是显示不出来");
                 return deepSpaceBean;
             }
-        })
-                .onErrorReturn(new Func1<Throwable, DeepSpaceBean>() {
-                    @Override
-                    public DeepSpaceBean call(Throwable throwable) {
-                        DeepSpaceBean deepSpaceBean = new DeepSpaceBean();
-                        if (throwable.getMessage().equals("400")) {
-                            deepSpaceBean.setExplanation("（机密）无权访问当前日期！");
-                            return deepSpaceBean;
-                        } else if (throwable.getMessage().equals("500")) {
-                            deepSpaceBean.setExplanation("（错误）因为相对论");
-                            return deepSpaceBean;
-                        }
-                        deepSpaceBean.setExplanation("没啥错误，就是显示不出来");
-                        return deepSpaceBean;
-                    }
-                });
+        });
+//                .onErrorReturn(new Func1<Throwable, DeepSpaceBean>() {
+//                    @Override
+//                    public DeepSpaceBean call(Throwable throwable) {
+//                        DeepSpaceBean deepSpaceBean = new DeepSpaceBean();
+//                        if (throwable.getMessage().equals("400")) {
+//                            deepSpaceBean.setExplanation("（机密）无权访问当前日期！");
+//                            return deepSpaceBean;
+//                        } else if (throwable.getMessage().equals("500")) {
+//                            deepSpaceBean.setExplanation("（错误）因为相对论");
+//                            return deepSpaceBean;
+//                        }
+//                        deepSpaceBean.setExplanation("没啥错误，就是显示不出来");
+//                        return deepSpaceBean;
+//                    }
+//                });
     }
 //    @Override
 //    public Observable<DeepSpaceBean> call(Observable<DeepSpaceBean> tObservable) {

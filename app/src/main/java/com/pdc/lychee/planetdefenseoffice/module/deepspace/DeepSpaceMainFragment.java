@@ -107,6 +107,9 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         refreshSwipe.setEnabled(true);
         refreshSwipe.setRefreshing(false);
         mState = STATE_NONE;
+        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_ERROR);
+        deepSpaceAdapter.notifyDataSetChanged();
+
         if (deepSpaceAdapter.getDataSize() > 0) {
             ToastUtil.toast("数据加载失败！");
         } else {
