@@ -48,7 +48,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
 
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
-    private OnLoadingListener onLoadingListener;
+    private OnLoadMoreListener onLoadingListener;
     private OnLoadingHeaderCallBack onLoadingHeaderCallBack;
 
     //多选模式
@@ -109,7 +109,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
                 break;
             case VIEW_TYPE_FOOTER:
                 if (mState == STATE_LOAD_MORE && onLoadingListener != null) {
-                    onLoadingListener.onLoading();
+                    onLoadingListener.onLoadMore();
                 }
                 FooterViewHolder fvh = (FooterViewHolder) holder;
                 fvh.itemView.setVisibility(View.VISIBLE);
@@ -188,9 +188,13 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
         return items.size();
     }
 
+    public final List getItems() {
+        return items;
+    }
+
     public final void addItem(T t) {
-        items.add(0, t);
-        notifyItemRangeInserted(getIndexFromData(0), 1);
+        items.add(items.size() == 0 ? 0 : items.size(), t);
+        notifyItemRangeInserted(getIndexFromData(items.size()), getIndexFromData(items.size()));
     }
 
     public final void addItems(List<T> objs) {
@@ -259,8 +263,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     }
 
 
-    public interface OnLoadingListener {
-        void onLoading();
+    public interface OnLoadMoreListener {
+        void onLoadMore();
     }
 
     public interface OnLoadingHeaderCallBack {
@@ -277,7 +281,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
         onItemLongClickListener = listener;
     }
 
-    public final void setOnLoadingListener(OnLoadingListener listener) {
+    public final void setOnLoadMoreListener(OnLoadMoreListener listener) {
         onLoadingListener = listener;
     }
 

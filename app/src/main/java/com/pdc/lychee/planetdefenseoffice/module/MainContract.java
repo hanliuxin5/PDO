@@ -10,8 +10,6 @@ public interface MainContract {
      interface View extends BaseView<Presenter> {
         void showOffice(int resId);
 
-        void showNetWorkingError();
-
         void showPopUpMenu();
 
         void openDrawer();

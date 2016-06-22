@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pdc.lychee.planetdefenseoffice.R;
+import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.base.adapter.BaseRecyclerViewAdapter;
 
 import java.util.List;
@@ -29,7 +30,9 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
 
     @Override
     protected void onBindDefaultViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+        APODViewHolder vh = (APODViewHolder) holder;
+        DeepSpaceBean deepSpaceBean = (DeepSpaceBean) items.get(position);
+        vh.textView3.setText(deepSpaceBean.getExplanation());
     }
 
     static class APODViewHolder extends RecyclerView.ViewHolder {

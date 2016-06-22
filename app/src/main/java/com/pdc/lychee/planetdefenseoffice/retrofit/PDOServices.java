@@ -1,6 +1,6 @@
 package com.pdc.lychee.planetdefenseoffice.retrofit;
 
-import com.pdc.lychee.planetdefenseoffice.module.deepspace.DeepSpaceBean;
+import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;
