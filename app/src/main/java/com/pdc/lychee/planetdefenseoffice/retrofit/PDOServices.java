@@ -22,6 +22,5 @@ public interface PDOServices {
      * @return
      */
     @GET("/planetary/apod?api_key=" + API_KEY)
-    Observable<DeepSpaceBean> getAPOD(@Query("date") String date,
-                                      @Query("hd") boolean hd);
+    Observable<DeepSpaceBean> getAPOD(@Query("date") String date);
 }

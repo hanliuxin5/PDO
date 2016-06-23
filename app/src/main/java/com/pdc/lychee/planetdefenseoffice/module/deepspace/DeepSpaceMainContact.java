@@ -17,7 +17,7 @@ public interface DeepSpaceMainContact {
 
         void showLoading();
 
-        void showLoadError();
+        void showLoadError(String str);
 
         void showLoadFinish();
 
@@ -38,6 +38,6 @@ public interface DeepSpaceMainContact {
 
     interface Presenter extends BasePresenter,
             SwipeRefreshLayout.OnRefreshListener, ErrorLayout.OnFailedClickListener, DeepSpaceAdapter.OnLoadMoreListener {
-        void loadDP(String date, boolean hd);
+        void loadDP(String date);
     }
 }

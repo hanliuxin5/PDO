@@ -2,10 +2,13 @@ package com.pdc.lychee.planetdefenseoffice.module.deepspace;
 
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
-import com.pdc.lychee.planetdefenseoffice.retrofit.RequestUncommonTransformer;
+import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
 import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.trello.rxlifecycle.FragmentEvent;
 
+import javax.net.ssl.SSLException;
+
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -18,7 +21,6 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private final DPRepository mDpRepository;
 
     private String date = "";
-    private boolean hd = false;
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
         mDeepSpaceMainView = deepSpaceMainView;
@@ -31,16 +33,17 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 //        Date date1 = new Date();
 //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 //        date = dateFormat.format(date1);
-        date = "1995-09-25";
-        hd = false;
-        loadDP(date, hd);
+
+        date = "1996-09-25";
+//        date = "1994-09-21";
+        loadDP(date);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void loadDP(String date, boolean hd) {
+    public void loadDP(String date) {
         mDeepSpaceMainView.showLoading();
-        mDpRepository.getDP(date, hd)
+        mDpRepository.getDP(date)
                 .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .doOnSubscribe(new Action0() {
                     @Override
@@ -49,7 +52,6 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     }
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .compose(new RequestUncommonTransformer())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<DeepSpaceBean>() {
                     @Override
@@ -58,8 +60,29 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        mDeepSpaceMainView.showLoadError();
+                    public void onError(Throwable throwable) {
+                        if (throwable instanceof HttpException) {
+                            HttpException httpException = (HttpException) throwable;
+                            if (httpException.code() == 400) {
+                                mDeepSpaceMainView.showLoadError("（400）无权访问当前日期！");
+
+                            }
+                            if (httpException.code() == 500) {
+                                mDeepSpaceMainView.showLoadError("（500）内部错误");
+                            }
+                        }
+                        if (throwable instanceof SSLException) {
+                            mDeepSpaceMainView.showLoadError("网络出现问题");
+                        }
+                        if (throwable instanceof XIAOHUException) {
+                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
+                            if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
+                                mDeepSpaceMainView.showLoadError("DP查询操作出错");
+                            }
+
+                        }
+                        mDeepSpaceMainView.showLoadError("未知错误");
+
                     }
 
                     @Override
@@ -80,7 +103,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     public void onLoadMore() {
         mDeepSpaceMainView.showLoadMore();
         date = TimeUtil.theDayBefore(date);
-        loadDP(date, hd);
+        loadDP(date);
     }
 
     @Override

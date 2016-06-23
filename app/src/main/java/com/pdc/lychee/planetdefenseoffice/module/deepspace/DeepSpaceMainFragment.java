@@ -14,7 +14,8 @@ import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.base.fragment.BaseFragment;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
-import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSoucre;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPLocalDataSource;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.TestWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.ToastUtil;
 import com.pdc.lychee.planetdefenseoffice.view.ErrorLayout;
@@ -60,7 +61,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mPresenter = new DeepSpaceMainPresenter(DPRepository.getInstance(DPRemoteDataSoucre.getInstance()),
+        mPresenter = new DeepSpaceMainPresenter(DPRepository.getInstance(DPRemoteDataSource.getInstance(), DPLocalDataSource.getInstance(mContext)),
                 this);
         refreshSwipe.setColorSchemeResources(
                 R.color.swipe_refresh_first, R.color.swipe_refresh_second,
@@ -90,6 +91,9 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @SuppressWarnings("unchecked")
     @Override
     public void showDP(DeepSpaceBean deepSpaceBean) {
+        if (deepSpaceBean == null) {
+            return;
+        }
         errorFrame.setState(ErrorLayout.HIDE);
         deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_MORE);
         deepSpaceAdapter.addItem(deepSpaceBean);
@@ -103,19 +107,20 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
-    public void showLoadError() {
+    public void showLoadError(String str) {
         refreshSwipe.setEnabled(true);
         refreshSwipe.setRefreshing(false);
         mState = STATE_NONE;
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_ERROR);
-        deepSpaceAdapter.notifyDataSetChanged();
-
+        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
+        deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
         if (deepSpaceAdapter.getDataSize() > 0) {
-            ToastUtil.toast("数据加载失败！");
+            ToastUtil.toast(str);
         } else {
-            ToastUtil.toast("数据加载失败！");
+            ToastUtil.toast(str);
             errorFrame.setState(ErrorLayout.LOAD_FAILED);
         }
+        deepSpaceAdapter.notifyDataSetChanged();
+
     }
 
     @Override

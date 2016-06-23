@@ -5,15 +5,16 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by lychee on 2016/6/16.
  */
-public class DeepSpaceBean extends DeepSpaceIllegalBean {
+public class DeepSpaceBean {
 
 
     /**
      * copyright : Bertrand Kulik
-     * date : 2016-06-22
+     * date : 2016-06-23
      * explanation : What's that over Paris?  Cirrus. Typically, cirrus clouds appear white or gray when reflecting sunlight, can appear dark at sunset (or sunrise) against a better lit sky. Cirrus are among the highest types of clouds and are usually thin enough to see stars through.  Cirrus clouds may form from moisture released above storm clouds and so may herald the arrival of a significant change in weather.  Conversely, cirrus clouds have also been seen on Mars, Jupiter, Saturn, Titan, Uranus, and Neptune.  The featured image was taken two days ago from a window in District 15, Paris, France, Earth.  The brightly lit object on the lower right is, of course, the Eiffel Tower.
      * hdurl : http://apod.nasa.gov/apod/image/1606/CirrusParis_Kulik_1080.jpg
      * media_type : image
+     * service_version : v1
      * title : Cirrus over Paris
      * url : http://apod.nasa.gov/apod/image/1606/CirrusParis_Kulik_1080.jpg
      */
@@ -28,6 +29,8 @@ public class DeepSpaceBean extends DeepSpaceIllegalBean {
     private String hdurl;
     @SerializedName("media_type")
     private String mediaType;
+    @SerializedName("service_version")
+    private String serviceVersion;
     @SerializedName("title")
     private String title;
     @SerializedName("url")
@@ -71,6 +74,14 @@ public class DeepSpaceBean extends DeepSpaceIllegalBean {
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
+    }
+
+    public String getServiceVersion() {
+        return serviceVersion;
+    }
+
+    public void setServiceVersion(String serviceVersion) {
+        this.serviceVersion = serviceVersion;
     }
 
     public String getTitle() {
