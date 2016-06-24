@@ -29,7 +29,6 @@ public class DPRemoteDataSource implements DPDataSource {
     @Override
     public Observable getDP(String date) {
         return PDORetrofit.getApiService().getAPOD(date);
-//                .subscribeOn(Schedulers.io());
 
     }
 

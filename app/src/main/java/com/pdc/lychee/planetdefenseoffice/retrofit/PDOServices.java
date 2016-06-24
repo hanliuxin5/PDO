@@ -18,7 +18,6 @@ public interface PDOServices {
      * 获取每日天文图
      *
      * @param date YYYY-MM-DD（默认当天日期）
-     * @param hd   true or false（默认false）
      * @return
      */
     @GET("/planetary/apod?api_key=" + API_KEY)

@@ -6,6 +6,9 @@ import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
 import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.trello.rxlifecycle.FragmentEvent;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.net.ssl.SSLException;
 
 import retrofit2.adapter.rxjava.HttpException;
@@ -30,18 +33,18 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
     @Override
     public void start() {
-//        Date date1 = new Date();
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        date = dateFormat.format(date1);
+        Date date1 = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        date = dateFormat.format(date1);
 
-        date = "1996-09-25";
+//        date = "1996-09-25";
 //        date = "1994-09-21";
         loadDP(date);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void loadDP(String date) {
+    public void loadDP(final String date) {
         mDeepSpaceMainView.showLoading();
         mDpRepository.getDP(date)
                 .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
@@ -65,24 +68,25 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             HttpException httpException = (HttpException) throwable;
                             if (httpException.code() == 400) {
                                 mDeepSpaceMainView.showLoadError("（400）无权访问当前日期！");
+                                mDeepSpaceMainView.showNoMoreDP();
 
                             }
                             if (httpException.code() == 500) {
                                 mDeepSpaceMainView.showLoadError("（500）内部错误");
+                                mDeepSpaceMainView.showNoMoreDP();
                             }
-                        }
-                        if (throwable instanceof SSLException) {
+                        } else if (throwable instanceof SSLException) {
                             mDeepSpaceMainView.showLoadError("网络出现问题");
-                        }
-                        if (throwable instanceof XIAOHUException) {
+                        } else if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
                                 mDeepSpaceMainView.showLoadError("DP查询操作出错");
+                                mDpRepository.deleteDP(date);
                             }
 
+                        } else {
+                            mDeepSpaceMainView.showLoadError("未知错误");
                         }
-                        mDeepSpaceMainView.showLoadError("未知错误");
-
                     }
 
                     @Override

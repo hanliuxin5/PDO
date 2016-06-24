@@ -11,6 +11,8 @@ public class XIAOHUException extends Exception {
     public static final int UNKNOWN = 1000;
     public static final int DB_QUERY = 666;
     public static final int DB_INSERT = 667;
+    public static final int DB_DELETE = 668;
+    public static final int DB_UPDATE = 669;
 
     public XIAOHUException(Throwable throwable, int code) {
         super(throwable);

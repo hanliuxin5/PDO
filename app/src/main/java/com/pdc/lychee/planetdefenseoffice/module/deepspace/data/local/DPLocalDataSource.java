@@ -1,5 +1,6 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,7 +12,6 @@ import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by lychee on 2016/6/23.
@@ -51,10 +51,9 @@ public class DPLocalDataSource implements DPDataSource {
                             subscriber.onError(xiaohuException);
                         }
                         subscriber.onNext(deepSpaceBean);
-//                        subscriber.onCompleted();
+                        subscriber.onCompleted();
                     }
-                })
-                .subscribeOn(Schedulers.io());
+                });
     }
 
     private DeepSpaceBean queryDP(String mDate) throws Exception {
@@ -85,33 +84,34 @@ public class DPLocalDataSource implements DPDataSource {
 
     @Override
     public void saveDP(final DeepSpaceBean deepSpaceBean) {
-//        return Observable.create(new Observable.OnSubscribe<DeepSpaceBean>() {
-//            @Override
-//            public void call(Subscriber<? super DeepSpaceBean> subscriber) {
-//                try {
         insertDP(deepSpaceBean);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_INSERT);
-//                    subscriber.onError(xiaohuException);
-//                }
-//                subscriber.onNext(deepSpaceBean);
-//                subscriber.onCompleted();
-//            }
-//        });
     }
 
     private void insertDP(DeepSpaceBean deepSpaceBean) {
+//        db.execSQL(
+//                "INSERT INTO " + DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME + " VALUES(?, ?, ?, ?, ?)",
+//                new Object[]{deepSpaceBean.getDate(),
+//                        deepSpaceBean.getExplanation(),
+//                        deepSpaceBean.getHdurl(),
+//                        deepSpaceBean.getTitle(),
+//                        deepSpaceBean.getUrl()
+//                });
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.execSQL(
-                "INSERT INTO " + DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME + " VALUES(?, ?, ?, ?, ?)",
-                new Object[]{deepSpaceBean.getDate(),
-                        deepSpaceBean.getExplanation(),
-                        deepSpaceBean.getHdurl(),
-                        deepSpaceBean.getTitle(),
-                        deepSpaceBean.getUrl()
-                });
-        db.close();
+        db.beginTransaction();  //开始事务
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE, deepSpaceBean.getDate());
+            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_EXPLANATION, deepSpaceBean.getExplanation());
+            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_HDURL, deepSpaceBean.getHdurl());
+            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_TITLE, deepSpaceBean.getTitle());
+            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_URL, deepSpaceBean.getUrl());
+            db.insert(DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME, null, cv);
+            db.setTransactionSuccessful();  //设置事务成功完成
+        } finally {
+            db.endTransaction();    //结束事务
+            db.close();
+        }
     }
 
     @Override
