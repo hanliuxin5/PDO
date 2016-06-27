@@ -1,7 +1,8 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace.data;
 
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
-import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPLocalDataSource;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 
 import rx.Observable;
@@ -17,15 +18,15 @@ public class DPRepository implements DPDataSource {
     private final static String TAG = "DPRepository";
     private volatile static DPRepository INSTANCE = null;
 
-    private final DPDataSource mDPsRemoteDataSource;
-    private final DPDataSource mDPsLocalDataSource;
+    private final DPRemoteDataSource mDPsRemoteDataSource;
+    private final DPLocalDataSource mDPsLocalDataSource;
 
-    private DPRepository(DPDataSource mDPsRemoteDataSource, DPDataSource mDPsLoaclDataSource) {
+    private DPRepository(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource) {
         this.mDPsRemoteDataSource = mDPsRemoteDataSource;
-        this.mDPsLocalDataSource = mDPsLoaclDataSource;
+        this.mDPsLocalDataSource = mDPsLocalDataSource;
     }
 
-    public static DPRepository getInstance(DPDataSource mDPsRemoteDataSource, DPDataSource mDPsLocalDataSource) {
+    public static DPRepository getInstance(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource) {
         if (INSTANCE == null) {
             synchronized (DPRepository.class) {
                 if (INSTANCE == null) {
@@ -34,6 +35,12 @@ public class DPRepository implements DPDataSource {
             }
         }
         return INSTANCE;
+    }
+
+    @Override
+    public Observable firstLoadDP() {
+        return mDPsLocalDataSource.getDP()
+                .subscribeOn(Schedulers.io());
     }
 
     @SuppressWarnings("unchecked")
@@ -50,7 +57,7 @@ public class DPRepository implements DPDataSource {
                                         @Override
                                         public void call(DeepSpaceBean deepSpaceBean) {
                                             try {
-                                                mDPsLocalDataSource.saveDP(deepSpaceBean);
+                                                saveDP(deepSpaceBean);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -63,35 +70,61 @@ public class DPRepository implements DPDataSource {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void saveDP(DeepSpaceBean deepSpaceBean) {
-    }
-
-    @Override
-    public void deleteALLDPs() {
-        mDPsLocalDataSource.deleteALLDPs();
-    }
-
-    @Override
-    public void deleteDP(final String date) {
-        Observable
-                .create(new Observable.OnSubscribe<String>() {
+        mDPsLocalDataSource.saveDP(deepSpaceBean)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Integer>() {
                     @Override
-                    public void call(Subscriber<? super String> subscriber) {
-                        try {
-                            mDPsLocalDataSource.deleteDP(date);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_DELETE);
-                            subscriber.onError(xiaohuException);
-                        }
-                        subscriber.onNext("");
-                        subscriber.onCompleted();
+                    public void onCompleted() {
+                        LogUtil.d(TAG + ": saveDP---onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtil.d(TAG + ": saveDP---onError" + e.getMessage());
 
                     }
-                })
+
+                    @Override
+                    public void onNext(Integer count) {
+                        LogUtil.d(TAG + ": saveDP---onNext---" + count);
+                    }
+                });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteALLDPs() {
+        mDPsLocalDataSource.deleteAllDPs()
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        LogUtil.d(TAG + ": deleteAllDPs---onCompleted");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LogUtil.d(TAG + ": deleteAllDPs---onError" + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onNext(Integer count) {
+                        LogUtil.d(TAG + ": deleteAllDPs---onNext---" + count);
+                    }
+                });
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteDP(final String date) {
+        mDPsLocalDataSource.deleteDP(date)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Integer>() {
                     @Override
                     public void onCompleted() {
                         LogUtil.d(TAG + ": deleteDP---onCompleted");
@@ -104,8 +137,8 @@ public class DPRepository implements DPDataSource {
                     }
 
                     @Override
-                    public void onNext(String s) {
-                        LogUtil.d(TAG + ": deleteDP---onNext");
+                    public void onNext(Integer count) {
+                        LogUtil.d(TAG + ": deleteDP---onNext---" + count);
                     }
                 });
     }

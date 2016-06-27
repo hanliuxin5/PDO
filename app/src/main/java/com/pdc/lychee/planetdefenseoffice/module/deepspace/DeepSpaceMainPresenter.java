@@ -23,7 +23,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private final DeepSpaceMainContact.View mDeepSpaceMainView;
     private final DPRepository mDpRepository;
 
-    private String date = "";
+    private String mDate = "";
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
         mDeepSpaceMainView = deepSpaceMainView;
@@ -33,19 +33,13 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
     @Override
     public void start() {
-        Date date1 = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        date = dateFormat.format(date1);
-
-//        date = "1996-09-25";
-//        date = "1994-09-21";
-        loadDP(date);
+        loadSavedDP();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void loadDP(final String date) {
-        mDeepSpaceMainView.showLoading();
+        mDate = date;
         mDpRepository.getDP(date)
                 .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .doOnSubscribe(new Action0() {
@@ -91,28 +85,74 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.showDP(deepSpaceBean);
+                        mDeepSpaceMainView.addDP(deepSpaceBean);
+                        mDate = deepSpaceBean.getDate();
                     }
                 });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void loadSavedDP() {
+        mDpRepository.firstLoadDP()
+                .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mDeepSpaceMainView.showLoading();
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<DeepSpaceBean>() {
+                    @Override
+                    public void onCompleted() {
+                        mDeepSpaceMainView.showLoadFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (throwable instanceof XIAOHUException) {
+                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
+                            if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
+                                mDeepSpaceMainView.showLoadError("DP查询操作出错");
+                            }
+                        } else {
+                            mDeepSpaceMainView.showLoadError("未知错误");
+                        }
+                    }
+
+                    @Override
+                    public void onNext(DeepSpaceBean deepSpaceBean) {
+                        mDeepSpaceMainView.addDP(deepSpaceBean);
+                        mDate = deepSpaceBean.getDate();
+                    }
+                });
+
     }
 
     @Override
     public void onLoadFailedClick() {
         mDeepSpaceMainView.showReloadOnError();
-        start();
-
+        onRefresh();
     }
 
     @Override
     public void onLoadMore() {
+        mDate = TimeUtil.theDayBefore(mDate);
+
         mDeepSpaceMainView.showLoadMore();
-        date = TimeUtil.theDayBefore(date);
-        loadDP(date);
+        loadDP(mDate);
     }
 
     @Override
     public void onRefresh() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        mDate = dateFormat.format(date);
+
         mDeepSpaceMainView.showRefresh();
-        start();
+
+        loadDP(mDate);
     }
 }

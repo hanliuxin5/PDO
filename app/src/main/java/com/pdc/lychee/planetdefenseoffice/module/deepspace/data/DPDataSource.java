@@ -16,6 +16,8 @@ public interface DPDataSource {
      */
     Observable getDP(String date);
 
+    Observable firstLoadDP();
+
     void saveDP(DeepSpaceBean deepSpaceBean);
 
     void deleteALLDPs();

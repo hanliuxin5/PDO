@@ -13,7 +13,9 @@ import com.pdc.lychee.planetdefenseoffice.view.ErrorLayout;
 public interface DeepSpaceMainContact {
 
     interface View extends BaseView<Presenter> {
-        void showDP(DeepSpaceBean deepSpaceBean);
+        void addDP(DeepSpaceBean deepSpaceBean);
+
+        void addDP(DeepSpaceBean deepSpaceBean, int position);
 
         void showLoading();
 
@@ -39,5 +41,7 @@ public interface DeepSpaceMainContact {
     interface Presenter extends BasePresenter,
             SwipeRefreshLayout.OnRefreshListener, ErrorLayout.OnFailedClickListener, DeepSpaceAdapter.OnLoadMoreListener {
         void loadDP(String date);
+
+        void loadSavedDP();
     }
 }

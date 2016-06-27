@@ -90,7 +90,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
     @SuppressWarnings("unchecked")
     @Override
-    public void showDP(DeepSpaceBean deepSpaceBean) {
+    public void addDP(DeepSpaceBean deepSpaceBean) {
         if (deepSpaceBean == null) {
             return;
         }
@@ -99,8 +99,23 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         deepSpaceAdapter.addItem(deepSpaceBean);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addDP(DeepSpaceBean deepSpaceBean, int position) {
+        if (deepSpaceBean == null) {
+            return;
+        }
+        errorFrame.setState(ErrorLayout.HIDE);
+        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_MORE);
+        deepSpaceAdapter.addItem(deepSpaceBean, position);
+    }
+
     @Override
     public void showLoading() {
+        if (mState == STATE_REFRESHING)
+            return;
+        mState = STATE_REFRESHING;
+        refreshSwipe.setEnabled(false);
         if (deepSpaceAdapter.getDataSize() == 0) {
             errorFrame.setState(ErrorLayout.LOADING);
         }
@@ -108,8 +123,8 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
     @Override
     public void showLoadError(String str) {
-        refreshSwipe.setEnabled(true);
         refreshSwipe.setRefreshing(false);
+        refreshSwipe.setEnabled(true);
         mState = STATE_NONE;
         deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
         deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
@@ -127,8 +142,8 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     public void showLoadFinish() {
         refreshSwipe.setRefreshing(false);
         refreshSwipe.setEnabled(true);
-        errorFrame.setState(ErrorLayout.HIDE);
         mState = STATE_NONE;
+        errorFrame.setState(ErrorLayout.HIDE);
     }
 
     @Override
@@ -177,6 +192,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         mState = STATE_REFRESHING;
         refreshSwipe.setRefreshing(true);
         refreshSwipe.setEnabled(false);
-        deepSpaceAdapter.clear();
+        deepSpaceAdapter.getItems().clear();
     }
 }
