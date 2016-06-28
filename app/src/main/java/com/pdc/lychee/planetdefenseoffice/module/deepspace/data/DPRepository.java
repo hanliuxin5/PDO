@@ -7,7 +7,6 @@ import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -53,14 +52,10 @@ public class DPRepository implements DPDataSource {
                     public Observable<DeepSpaceBean> call(DeepSpaceBean deepSpaceBean) {
                         if (deepSpaceBean == null) {
                             return mDPsRemoteDataSource.getDP(date)
-                                    .doOnNext(new Action1<DeepSpaceBean>() {
+                                    .flatMap(new Func1<DeepSpaceBean, Observable<DeepSpaceBean>>() {
                                         @Override
-                                        public void call(DeepSpaceBean deepSpaceBean) {
-                                            try {
-                                                saveDP(deepSpaceBean);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+                                        public Observable<DeepSpaceBean> call(DeepSpaceBean deepSpaceBean) {
+                                            return mDPsLocalDataSource.saveDP(deepSpaceBean);
                                         }
                                     });
                         } else {
@@ -75,7 +70,7 @@ public class DPRepository implements DPDataSource {
     public void saveDP(DeepSpaceBean deepSpaceBean) {
         mDPsLocalDataSource.saveDP(deepSpaceBean)
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Integer>() {
+                .subscribe(new Subscriber<Long>() {
                     @Override
                     public void onCompleted() {
                         LogUtil.d(TAG + ": saveDP---onCompleted");
@@ -88,7 +83,7 @@ public class DPRepository implements DPDataSource {
                     }
 
                     @Override
-                    public void onNext(Integer count) {
+                    public void onNext(Long count) {
                         LogUtil.d(TAG + ": saveDP---onNext---" + count);
                     }
                 });
@@ -138,7 +133,7 @@ public class DPRepository implements DPDataSource {
 
                     @Override
                     public void onNext(Integer count) {
-                        LogUtil.d(TAG + ": deleteDP---onNext---" + count);
+                        LogUtil.d(TAG + ": deleteDP---onNext---删除记录条数：" + count);
                     }
                 });
     }

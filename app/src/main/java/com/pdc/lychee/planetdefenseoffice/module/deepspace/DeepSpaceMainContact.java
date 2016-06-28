@@ -35,6 +35,11 @@ public interface DeepSpaceMainContact {
 
         void showReloadOnError();
 
+        void showDeletingDialog();
+
+        void clearRecyclerView();
+
+        void removeDP(String date);
 
     }
 
@@ -43,5 +48,10 @@ public interface DeepSpaceMainContact {
         void loadDP(String date);
 
         void loadSavedDP();
+
+        void deleteDP(String date);
+
+        String getDate();
+
     }
 }

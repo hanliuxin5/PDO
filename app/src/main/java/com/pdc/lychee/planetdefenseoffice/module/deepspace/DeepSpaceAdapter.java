@@ -32,7 +32,7 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
     protected void onBindDefaultViewHolder(RecyclerView.ViewHolder holder, int position) {
         APODViewHolder vh = (APODViewHolder) holder;
         DeepSpaceBean deepSpaceBean = (DeepSpaceBean) items.get(position);
-        vh.textView3.setText(deepSpaceBean.getDate());
+        vh.textView3.setText(deepSpaceBean.getDate() + "\n" + deepSpaceBean.getUrl());
     }
 
     static class APODViewHolder extends RecyclerView.ViewHolder {

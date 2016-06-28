@@ -1,6 +1,5 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -78,16 +77,16 @@ public class DPLocalDataSource {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " +
-                DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME +
-                " where " + DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE + "=?", new String[]{String.valueOf(mDate)});
+                DeepSpaceEntry.TABLE_NAME +
+                " where " + DeepSpaceEntry.COLUMN_NAME_DATE + "=?", new String[]{String.valueOf(mDate)});
 
         if (cursor.moveToNext()) {
             deepSpaceBean = new DeepSpaceBean();
-            String date = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE));
-            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
-            String title = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_TITLE));
-            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_HDURL));
-            String url = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_URL));
+            String date = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_DATE));
+            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
+            String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
+            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
+            String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
             deepSpaceBean.setDate(date);
             deepSpaceBean.setExplanation(explanation);
             deepSpaceBean.setTitle(title);
@@ -103,17 +102,17 @@ public class DPLocalDataSource {
         DeepSpaceBean deepSpaceBean = null;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME +
-                        " ORDER BY " + DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE + " DESC;",
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DeepSpaceEntry.TABLE_NAME +
+                        " ORDER BY " + DeepSpaceEntry.COLUMN_NAME_DATE + " DESC",
                 null);
 
         if (cursor.moveToFirst()) {
             deepSpaceBean = new DeepSpaceBean();
-            String date = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE));
-            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
-            String title = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_TITLE));
-            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_HDURL));
-            String url = cursor.getString(cursor.getColumnIndex(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_URL));
+            String date = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_DATE));
+            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
+            String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
+            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
+            String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
             deepSpaceBean.setDate(date);
             deepSpaceBean.setExplanation(explanation);
             deepSpaceBean.setTitle(title);
@@ -127,41 +126,37 @@ public class DPLocalDataSource {
 
     public Observable saveDP(final DeepSpaceBean deepSpaceBean) {
         return Observable
-                .create(new Observable.OnSubscribe<Long>() {
+                .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
-                    public void call(Subscriber<? super Long> subscriber) {
-                        Long count = 0L;
+                    public void call(Subscriber<? super DeepSpaceBean> subscriber) {
+                        DeepSpaceBean deepSpaceBean1 = null;
                         try {
-                            count = insertDP(deepSpaceBean);
+                            deepSpaceBean1 = insertDP(deepSpaceBean);
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_INSERT);
                             subscriber.onError(xiaohuException);
                         }
-                        subscriber.onNext(count);
+                        subscriber.onNext(deepSpaceBean1);
                         subscriber.onCompleted();
                     }
                 });
     }
 
-    private long insertDP(DeepSpaceBean deepSpaceBean) {
-        long count;
+    private DeepSpaceBean insertDP(DeepSpaceBean deepSpaceBean) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.beginTransaction();  //开始事务
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE, deepSpaceBean.getDate());
-            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_EXPLANATION, deepSpaceBean.getExplanation());
-            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_HDURL, deepSpaceBean.getHdurl());
-            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_TITLE, deepSpaceBean.getTitle());
-            cv.put(DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_URL, deepSpaceBean.getUrl());
-            count = db.insert(DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME, null, cv);
-            db.setTransactionSuccessful();  //设置事务成功完成
-            return count;
-        } finally {
-            db.endTransaction();    //结束事务
-            db.close();
-        }
+        db.execSQL("insert into " + DeepSpaceEntry.TABLE_NAME +
+                        "(" + DeepSpaceEntry.COLUMN_NAME_DATE +
+                        ", " + DeepSpaceEntry.COLUMN_NAME_EXPLANATION +
+                        ", " + DeepSpaceEntry.COLUMN_NAME_HDURL +
+                        ", " + DeepSpaceEntry.COLUMN_NAME_TITLE +
+                        ", " + DeepSpaceEntry.COLUMN_NAME_URL +
+                        ")" +
+                        " values(?,?,?,?,?)",
+                new Object[]{deepSpaceBean.getDate(), deepSpaceBean.getExplanation(),
+                        deepSpaceBean.getHdurl(), deepSpaceBean.getTitle(), deepSpaceBean.getUrl()});
+//        db.close();
+        return deepSpaceBean;
     }
 
     public Observable deleteAllDPs() {
@@ -172,8 +167,8 @@ public class DPLocalDataSource {
                         Integer count = 0;
                         try {
                             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                            count = db.delete(DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME, null, null);
-                            db.close();
+                            count = db.delete(DeepSpaceEntry.TABLE_NAME, null, null);
+//                            db.close();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -195,10 +190,10 @@ public class DPLocalDataSource {
                         Integer count = 0;
                         try {
                             SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                            db.delete(DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME,
-                                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE + "=?",
+                            count = db.delete(DeepSpaceEntry.TABLE_NAME,
+                                    DeepSpaceEntry.COLUMN_NAME_DATE + "=?",
                                     new String[]{String.valueOf(date)});
-                            db.close();
+//                            db.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_DELETE);

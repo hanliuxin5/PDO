@@ -16,6 +16,10 @@
     <string name="load_no_more">没有更多了</string>
     <string name="refreshing">刷新中</string>
 
+
     <!--test_string-->
     <string name="string_test">地球的未来掌握在你们手中 —— 大笔哥"</string>
+    <string name="menu_delete_test">删除</string>
+    <string name="menu_repeat_test">重试</string>
+
 </resources>

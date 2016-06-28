@@ -1,8 +1,11 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace;
 
+import android.text.TextUtils;
+
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
 import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
+import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.trello.rxlifecycle.FragmentEvent;
 
@@ -24,6 +27,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private final DPRepository mDpRepository;
 
     private String mDate = "";
+    private boolean mIsRefresh;
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
         mDeepSpaceMainView = deepSpaceMainView;
@@ -39,7 +43,6 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @SuppressWarnings("unchecked")
     @Override
     public void loadDP(final String date) {
-        mDate = date;
         mDpRepository.getDP(date)
                 .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .doOnSubscribe(new Action0() {
@@ -75,17 +78,23 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
                                 mDeepSpaceMainView.showLoadError("DP查询操作出错");
-                                mDpRepository.deleteDP(date);
                             }
 
                         } else {
                             mDeepSpaceMainView.showLoadError("未知错误");
+                            LogUtil.e(throwable.getMessage());
                         }
                     }
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.addDP(deepSpaceBean);
+                        if (mIsRefresh) {
+                            mDeepSpaceMainView.clearRecyclerView();
+                            mDeepSpaceMainView.addDP(deepSpaceBean);
+                        } else {
+                            mDeepSpaceMainView.addDP(deepSpaceBean);
+                        }
+                        mIsRefresh = false;
                         mDate = deepSpaceBean.getDate();
                     }
                 });
@@ -119,17 +128,32 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             }
                         } else {
                             mDeepSpaceMainView.showLoadError("未知错误");
+                            LogUtil.e(throwable.getMessage());
                         }
                     }
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.addDP(deepSpaceBean);
-                        mDate = deepSpaceBean.getDate();
+                        if (deepSpaceBean != null) {
+                            mDeepSpaceMainView.addDP(deepSpaceBean);
+                            mDate = deepSpaceBean.getDate();
+                        } else {
+                            onRefresh();
+                        }
                     }
                 });
 
     }
+
+    @Override
+    public void deleteDP(String date) {
+        if (TextUtils.isEmpty(date)) {
+            return;
+        }
+        mDpRepository.deleteDP(date);
+        mDeepSpaceMainView.removeDP(date);
+    }
+
 
     @Override
     public void onLoadFailedClick() {
@@ -152,7 +176,12 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         mDate = dateFormat.format(date);
 
         mDeepSpaceMainView.showRefresh();
-
+        mIsRefresh = true;
         loadDP(mDate);
+    }
+
+    @Override
+    public String getDate() {
+        return mDate;
     }
 }

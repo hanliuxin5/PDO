@@ -210,7 +210,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     }
 
     public final void addItems(List<T> objs, int index) {
-        items.addAll(index,objs);
+        items.addAll(index, objs);
         notifyItemRangeInserted(getIndexFromData(index), getIndexFromData(objs.size()));
     }
 
@@ -221,7 +221,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
 
     public final void clear() {
         items.clear();
-        notifyItemRangeRemoved(0, items.size());
+//        notifyItemRangeRemoved(getIndexFromData(0), items.size());
+        notifyDataSetChanged();
     }
 
     public void removeItems(List<Integer> positions) {

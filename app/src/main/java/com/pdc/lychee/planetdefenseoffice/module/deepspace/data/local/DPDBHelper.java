@@ -17,12 +17,12 @@ public class DPDBHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
 
     private static final String SQL_CREATE_DEEPSPACE =
-            "CREATE TABLE " + DeepSpacePersistenceContract.DeepSpaceEntry.TABLE_NAME + " (" +
-                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_DATE + TEXT_TYPE + "PRIMARY KEY," +
-                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_EXPLANATION + TEXT_TYPE + "," +
-                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_HDURL + TEXT_TYPE + "," +
-                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_TITLE + TEXT_TYPE + "," +
-                    DeepSpacePersistenceContract.DeepSpaceEntry.COLUMN_NAME_URL +
+            "CREATE TABLE " + DeepSpaceEntry.TABLE_NAME + " (" +
+                    DeepSpaceEntry.COLUMN_NAME_DATE + TEXT_TYPE + "PRIMARY KEY," +
+                    DeepSpaceEntry.COLUMN_NAME_EXPLANATION + TEXT_TYPE + "," +
+                    DeepSpaceEntry.COLUMN_NAME_HDURL + TEXT_TYPE + "," +
+                    DeepSpaceEntry.COLUMN_NAME_TITLE + TEXT_TYPE + "," +
+                    DeepSpaceEntry.COLUMN_NAME_URL +
                     " )";
 
     public DPDBHelper(Context context) {

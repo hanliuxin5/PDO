@@ -26,7 +26,8 @@ public class TestWrapContentLinearLayoutManager extends LinearLayoutManager {
         try {
             super.onLayoutChildren(recycler, state);
         } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            LogUtil.e("onLayoutChildren");
         }
     }
 }
