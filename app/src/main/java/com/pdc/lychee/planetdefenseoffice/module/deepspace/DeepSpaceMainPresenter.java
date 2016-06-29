@@ -82,7 +82,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             }
 
                         } else {
-                            mDeepSpaceMainView.showLoadError("未知错误");
+                            mDeepSpaceMainView.showLoadError("加载数据时出错");
                             LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
                         }
                     }
@@ -129,8 +129,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                                 mDeepSpaceMainView.showLoadError("DP查询操作出错");
                             }
                         } else {
-                            mDeepSpaceMainView.showLoadError("未知错误");
-                            LogUtil.e(throwable.getMessage());
+                            mDeepSpaceMainView.showLoadError("载入本地数据时出错");
+                            LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
                         }
                     }
 

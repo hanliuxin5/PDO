@@ -50,7 +50,7 @@ public class DPRepository implements DPDataSource {
                 .doOnNext(new Action1<DeepSpaceBean>() {
                     @Override
                     public void call(DeepSpaceBean deepSpaceBean) {
-                        mDPsLocalDataSource.saveDP(deepSpaceBean);
+                        saveDP(deepSpaceBean);
                     }
                 });
         return Observable.concat(disk, networkWithSave)

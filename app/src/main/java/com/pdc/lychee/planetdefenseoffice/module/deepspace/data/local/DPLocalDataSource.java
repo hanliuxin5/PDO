@@ -95,7 +95,7 @@ public class DPLocalDataSource {
             deepSpaceBean.setUrl(url);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return deepSpaceBean;
     }
 
@@ -121,7 +121,7 @@ public class DPLocalDataSource {
             deepSpaceBean.setUrl(url);
         }
         cursor.close();
-        db.close();
+//        db.close();
         return deepSpaceBean;
     }
 
@@ -133,13 +133,13 @@ public class DPLocalDataSource {
                         DeepSpaceBean deepSpaceBean1 = null;
                         try {
                             deepSpaceBean1 = insertDP(deepSpaceBean);
+                            subscriber.onNext(deepSpaceBean1);
+                            subscriber.onCompleted();
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_INSERT);
                             subscriber.onError(xiaohuException);
                         }
-                        subscriber.onNext(deepSpaceBean1);
-                        subscriber.onCompleted();
                     }
                 });
     }
@@ -169,15 +169,15 @@ public class DPLocalDataSource {
                         try {
                             SQLiteDatabase db = mDbHelper.getWritableDatabase();
                             count = db.delete(DeepSpaceEntry.TABLE_NAME, null, null);
+                            subscriber.onNext(count);
+                            subscriber.onCompleted();
 //                            db.close();
-
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_DELETE);
                             subscriber.onError(xiaohuException);
                         }
-                        subscriber.onNext(count);
-                        subscriber.onCompleted();
+
                     }
                 });
     }
