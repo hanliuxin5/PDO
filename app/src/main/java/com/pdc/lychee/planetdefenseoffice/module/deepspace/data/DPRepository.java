@@ -7,6 +7,7 @@ import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -42,35 +43,32 @@ public class DPRepository implements DPDataSource {
                 .subscribeOn(Schedulers.io());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Observable getDP(final String date) {
-        return mDPsLocalDataSource.getDP(date)
-                .subscribeOn(Schedulers.io())
-                .flatMap(new Func1<DeepSpaceBean, Observable<DeepSpaceBean>>() {
+        Observable<DeepSpaceBean> disk = mDPsLocalDataSource.getDP(date);
+        Observable<DeepSpaceBean> networkWithSave = mDPsRemoteDataSource.getDP(date)
+                .doOnNext(new Action1<DeepSpaceBean>() {
                     @Override
-                    public Observable<DeepSpaceBean> call(DeepSpaceBean deepSpaceBean) {
-                        if (deepSpaceBean == null) {
-                            return mDPsRemoteDataSource.getDP(date)
-                                    .flatMap(new Func1<DeepSpaceBean, Observable<DeepSpaceBean>>() {
-                                        @Override
-                                        public Observable<DeepSpaceBean> call(DeepSpaceBean deepSpaceBean) {
-                                            return mDPsLocalDataSource.saveDP(deepSpaceBean);
-                                        }
-                                    });
-                        } else {
-                            return Observable.just(deepSpaceBean);
-                        }
+                    public void call(DeepSpaceBean deepSpaceBean) {
+                        mDPsLocalDataSource.saveDP(deepSpaceBean);
                     }
                 });
+        return Observable.concat(disk, networkWithSave)
+                .subscribeOn(Schedulers.io())
+                .filter(new Func1<DeepSpaceBean, Boolean>() {
+                    @Override
+                    public Boolean call(DeepSpaceBean deepSpaceBean) {
+                        return deepSpaceBean != null;
+                    }
+                })
+                .first();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void saveDP(DeepSpaceBean deepSpaceBean) {
         mDPsLocalDataSource.saveDP(deepSpaceBean)
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Long>() {
+                .subscribe(new Subscriber<DeepSpaceBean>() {
                     @Override
                     public void onCompleted() {
                         LogUtil.d(TAG + ": saveDP---onCompleted");
@@ -83,13 +81,12 @@ public class DPRepository implements DPDataSource {
                     }
 
                     @Override
-                    public void onNext(Long count) {
-                        LogUtil.d(TAG + ": saveDP---onNext---" + count);
+                    public void onNext(DeepSpaceBean deepSpaceBean) {
+                        LogUtil.d(TAG + ": saveDP---onNext---" + deepSpaceBean.getDate());
                     }
                 });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void deleteALLDPs() {
         mDPsLocalDataSource.deleteAllDPs()
@@ -108,13 +105,12 @@ public class DPRepository implements DPDataSource {
 
                     @Override
                     public void onNext(Integer count) {
-                        LogUtil.d(TAG + ": deleteAllDPs---onNext---" + count);
+                        LogUtil.d(TAG + ": deleteAllDPs---onNext---删除记录条数：" + count);
                     }
                 });
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void deleteDP(final String date) {
         mDPsLocalDataSource.deleteDP(date)

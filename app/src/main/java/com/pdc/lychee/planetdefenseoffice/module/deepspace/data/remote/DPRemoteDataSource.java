@@ -1,5 +1,6 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote;
 
+import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.retrofit.PDORetrofit;
 
 import rx.Observable;
@@ -24,8 +25,8 @@ public class DPRemoteDataSource {
         return INSTANCE;
     }
 
-    public Observable getDP(String date) {
+    public Observable<DeepSpaceBean> getDP(String date) {
         return PDORetrofit.getApiService().getAPOD(date);
-
     }
+
 }

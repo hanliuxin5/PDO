@@ -57,6 +57,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     @Override
                     public void onCompleted() {
                         mDeepSpaceMainView.showLoadFinish();
+                        mIsRefresh = false;
                     }
 
                     @Override
@@ -82,20 +83,21 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
                         } else {
                             mDeepSpaceMainView.showLoadError("未知错误");
-                            LogUtil.e(throwable.getMessage());
+                            LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
                         }
                     }
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
-                        if (mIsRefresh) {
-                            mDeepSpaceMainView.clearRecyclerView();
-                            mDeepSpaceMainView.addDP(deepSpaceBean);
-                        } else {
-                            mDeepSpaceMainView.addDP(deepSpaceBean);
+                        if (deepSpaceBean != null) {
+                            if (mIsRefresh) {
+                                mDeepSpaceMainView.clearRecyclerView();
+                                mDeepSpaceMainView.addDP(deepSpaceBean);
+                            } else {
+                                mDeepSpaceMainView.addDP(deepSpaceBean);
+                            }
+                            mDate = deepSpaceBean.getDate();
                         }
-                        mIsRefresh = false;
-                        mDate = deepSpaceBean.getDate();
                     }
                 });
     }

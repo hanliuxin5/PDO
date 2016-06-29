@@ -34,7 +34,7 @@ public class DPLocalDataSource {
         return INSTANCE;
     }
 
-    public Observable getDP(final String date) {
+    public Observable<DeepSpaceBean> getDP(final String date) {
         return Observable
                 .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
@@ -42,18 +42,18 @@ public class DPLocalDataSource {
                         DeepSpaceBean deepSpaceBean = null;
                         try {
                             deepSpaceBean = queryDP(date);
+                            subscriber.onNext(deepSpaceBean);
+                            subscriber.onCompleted();
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_QUERY);
                             subscriber.onError(xiaohuException);
                         }
-                        subscriber.onNext(deepSpaceBean);
-                        subscriber.onCompleted();
                     }
                 });
     }
 
-    public Observable getDP() {
+    public Observable<DeepSpaceBean> getDP() {
         return Observable
                 .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
@@ -61,13 +61,14 @@ public class DPLocalDataSource {
                         DeepSpaceBean deepSpaceBean = null;
                         try {
                             deepSpaceBean = queryDP();
+                            subscriber.onNext(deepSpaceBean);
+                            subscriber.onCompleted();
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_QUERY);
                             subscriber.onError(xiaohuException);
                         }
-                        subscriber.onNext(deepSpaceBean);
-                        subscriber.onCompleted();
+
                     }
                 });
     }
@@ -124,7 +125,7 @@ public class DPLocalDataSource {
         return deepSpaceBean;
     }
 
-    public Observable saveDP(final DeepSpaceBean deepSpaceBean) {
+    public Observable<DeepSpaceBean> saveDP(final DeepSpaceBean deepSpaceBean) {
         return Observable
                 .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
@@ -143,7 +144,7 @@ public class DPLocalDataSource {
                 });
     }
 
-    private DeepSpaceBean insertDP(DeepSpaceBean deepSpaceBean) {
+    public DeepSpaceBean insertDP(DeepSpaceBean deepSpaceBean) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.execSQL("insert into " + DeepSpaceEntry.TABLE_NAME +
                         "(" + DeepSpaceEntry.COLUMN_NAME_DATE +
@@ -159,7 +160,7 @@ public class DPLocalDataSource {
         return deepSpaceBean;
     }
 
-    public Observable deleteAllDPs() {
+    public Observable<Integer> deleteAllDPs() {
         return Observable
                 .create(new Observable.OnSubscribe<Integer>() {
                     @Override
@@ -182,7 +183,7 @@ public class DPLocalDataSource {
     }
 
 
-    public Observable deleteDP(final String date) {
+    public Observable<Integer> deleteDP(final String date) {
         return Observable
                 .create(new Observable.OnSubscribe<Integer>() {
                     @Override
