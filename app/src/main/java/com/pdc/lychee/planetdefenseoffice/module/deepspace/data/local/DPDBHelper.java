@@ -22,7 +22,8 @@ public class DPDBHelper extends SQLiteOpenHelper {
                     DeepSpaceEntry.COLUMN_NAME_EXPLANATION + TEXT_TYPE + "," +
                     DeepSpaceEntry.COLUMN_NAME_HDURL + TEXT_TYPE + "," +
                     DeepSpaceEntry.COLUMN_NAME_TITLE + TEXT_TYPE + "," +
-                    DeepSpaceEntry.COLUMN_NAME_URL +
+                    DeepSpaceEntry.COLUMN_NAME_URL + TEXT_TYPE + "," +
+                    DeepSpaceEntry.COLUMN_NAME_MEDIATYPE + TEXT_TYPE +
                     " )";
 
     public DPDBHelper(Context context) {

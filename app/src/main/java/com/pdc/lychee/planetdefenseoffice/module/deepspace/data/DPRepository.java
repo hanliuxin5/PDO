@@ -2,6 +2,7 @@ package com.pdc.lychee.planetdefenseoffice.module.deepspace.data;
 
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPLocalDataSource;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPMemoryDataSource;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 
@@ -20,17 +21,19 @@ public class DPRepository implements DPDataSource {
 
     private final DPRemoteDataSource mDPsRemoteDataSource;
     private final DPLocalDataSource mDPsLocalDataSource;
+    private final DPMemoryDataSource mDpMemoryDataSource;
 
-    private DPRepository(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource) {
+    private DPRepository(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource, DPMemoryDataSource mDpMemoryDataSource) {
         this.mDPsRemoteDataSource = mDPsRemoteDataSource;
         this.mDPsLocalDataSource = mDPsLocalDataSource;
+        this.mDpMemoryDataSource = mDpMemoryDataSource;
     }
 
-    public static DPRepository getInstance(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource) {
+    public static DPRepository getInstance(DPRemoteDataSource mDPsRemoteDataSource, DPLocalDataSource mDPsLocalDataSource, DPMemoryDataSource mDpMemoryDataSource) {
         if (INSTANCE == null) {
             synchronized (DPRepository.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new DPRepository(mDPsRemoteDataSource, mDPsLocalDataSource);
+                    INSTANCE = new DPRepository(mDPsRemoteDataSource, mDPsLocalDataSource, mDpMemoryDataSource);
                 }
             }
         }
@@ -45,15 +48,41 @@ public class DPRepository implements DPDataSource {
 
     @Override
     public Observable getDP(final String date) {
-        Observable<DeepSpaceBean> disk = mDPsLocalDataSource.getDP(date);
+        Observable<DeepSpaceBean> memory = Observable.create(new Observable.OnSubscribe<DeepSpaceBean>() {
+            @Override
+            public void call(Subscriber<? super DeepSpaceBean> subscriber) {
+                DeepSpaceBean deepSpaceBean = mDpMemoryDataSource.get(date);
+                subscriber.onNext(deepSpaceBean);
+                subscriber.onCompleted();
+                if (deepSpaceBean != null)
+                    LogUtil.i("memory获取到" + mDpMemoryDataSource.get(date).getDate());
+            }
+        });
+        Observable<DeepSpaceBean> diskWithSave = mDPsLocalDataSource.getDP(date)
+                .doOnNext(new Action1<DeepSpaceBean>() {
+                    @Override
+                    public void call(DeepSpaceBean deepSpaceBean) {
+                        if (deepSpaceBean != null) {
+                            mDpMemoryDataSource.put(deepSpaceBean.getDate(), deepSpaceBean);
+                            LogUtil.i("diskWithSave获取到并保存" + deepSpaceBean.getDate());
+                        }
+                    }
+                });
         Observable<DeepSpaceBean> networkWithSave = mDPsRemoteDataSource.getDP(date)
                 .doOnNext(new Action1<DeepSpaceBean>() {
                     @Override
                     public void call(DeepSpaceBean deepSpaceBean) {
-                        saveDP(deepSpaceBean);
+                        if (!deepSpaceBean.getDate().equals("400") && !deepSpaceBean.getDate().equals("500")) {
+                            saveDP(deepSpaceBean);
+                            LogUtil.i("networkWithSave获取到并保存" + deepSpaceBean.getDate());
+                        } else {
+                            LogUtil.i("networkWithSave获取到不保存" + deepSpaceBean.getDate());
+                        }
+
                     }
                 });
-        return Observable.concat(disk, networkWithSave)
+
+        return Observable.concat(memory, diskWithSave, networkWithSave)
                 .subscribeOn(Schedulers.io())
                 .filter(new Func1<DeepSpaceBean, Boolean>() {
                     @Override
@@ -66,6 +95,7 @@ public class DPRepository implements DPDataSource {
 
     @Override
     public void saveDP(DeepSpaceBean deepSpaceBean) {
+        mDpMemoryDataSource.put(deepSpaceBean.getDate(), deepSpaceBean);
         mDPsLocalDataSource.saveDP(deepSpaceBean)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<DeepSpaceBean>() {
@@ -89,6 +119,7 @@ public class DPRepository implements DPDataSource {
 
     @Override
     public void deleteALLDPs() {
+        mDpMemoryDataSource.clearAll();
         mDPsLocalDataSource.deleteAllDPs()
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Integer>() {
@@ -113,6 +144,7 @@ public class DPRepository implements DPDataSource {
 
     @Override
     public void deleteDP(final String date) {
+        mDpMemoryDataSource.clear(date);
         mDPsLocalDataSource.deleteDP(date)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Integer>() {

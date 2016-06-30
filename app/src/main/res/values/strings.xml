@@ -15,7 +15,8 @@
     <string name="invalid_network">无效的网络</string>
     <string name="load_no_more">没有更多了</string>
     <string name="refreshing">刷新中</string>
-
+    <!--深空探索-->
+    <string name="nasa_dp">NASA</string>
 
     <!--test_string-->
     <string name="string_test">地球的未来掌握在你们手中 —— 大笔哥"</string>

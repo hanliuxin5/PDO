@@ -46,8 +46,8 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     protected LayoutInflater mInflater;
     protected int mState;
 
-    private OnItemClickListener onItemClickListener;
-    private OnItemLongClickListener onItemLongClickListener;
+//    private OnItemClickListener onItemClickListener;
+//    private OnItemLongClickListener onItemLongClickListener;
     private OnLoadMoreListener onLoadingListener;
     private OnLoadingHeaderCallBack onLoadingHeaderCallBack;
 
@@ -286,13 +286,13 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
         void onBindHeaderHolder(RecyclerView.ViewHolder holder, int position);
     }
 
-    public final void setOnItemClickListener(OnItemClickListener listener) {
-        onItemClickListener = listener;
-    }
-
-    public final void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        onItemLongClickListener = listener;
-    }
+//    public final void setOnItemClickListener(OnItemClickListener listener) {
+//        onItemClickListener = listener;
+//    }
+//
+//    public final void setOnItemLongClickListener(OnItemLongClickListener listener) {
+//        onItemLongClickListener = listener;
+//    }
 
     public final void setOnLoadMoreListener(OnLoadMoreListener listener) {
         onLoadingListener = listener;

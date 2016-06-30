@@ -20,10 +20,12 @@ package com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local;
  * The contract used for the db to save the tasks locally.
  */
 public final class DeepSpaceEntry {
-    public static final String TABLE_NAME = "deepsapce";
+    public static final String TABLE_NAME = "deepspace";
     public static final String COLUMN_NAME_DATE = "date";
     public static final String COLUMN_NAME_EXPLANATION = "explanation";
     public static final String COLUMN_NAME_HDURL = "hdurl";
     public static final String COLUMN_NAME_TITLE = "title";
     public static final String COLUMN_NAME_URL = "url";
+    public static final String COLUMN_NAME_MEDIATYPE = "media_type";
+
 }

@@ -8,16 +8,16 @@ import android.util.AttributeSet;
 /**
  * Created by lychee on 2016/5/16.
  */
-public class TestWrapContentLinearLayoutManager extends LinearLayoutManager {
-    public TestWrapContentLinearLayoutManager(Context context) {
+public class FixWrapContentLinearLayoutManager extends LinearLayoutManager {
+    public FixWrapContentLinearLayoutManager(Context context) {
         super(context);
     }
 
-    public TestWrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    public FixWrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
     }
 
-    public TestWrapContentLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FixWrapContentLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

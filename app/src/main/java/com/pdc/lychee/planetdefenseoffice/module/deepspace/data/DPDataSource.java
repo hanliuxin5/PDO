@@ -12,7 +12,7 @@ public interface DPDataSource {
     /**
      * 根据参数获取天文图
      *
-     * @param date YYYY-MM-DD 日期
+     * @param date yyyy-MM-dd 日期
      */
     Observable getDP(String date);
 

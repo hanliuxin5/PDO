@@ -29,7 +29,8 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     NavigationView navView;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    private MainContract.Presenter mainPrsenter;
+
+    private MainContract.Presenter mainPresenter;
 
     @Override
     protected int setContentView() {
@@ -40,7 +41,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        mainPrsenter = new MainPresenter(this);
+        mainPresenter = new MainPresenter(this);
         if (savedInstanceState == null) {
             loadRootFragment(R.id.fl_container, DeepSpaceMainFragment.newInstance());
         }
@@ -63,13 +64,13 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     @Override
     public void setPresenter(MainContract.Presenter presenter) {
         if (presenter != null)
-            mainPrsenter = presenter;
+            mainPresenter = presenter;
     }
 
     @Override
     public void showOffice(int resId) {
         if (resId == R.id.nav_deep) {
-            mainPrsenter.start();
+            mainPresenter.start();
             DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
             if (deepSpaceMainFragment == null) {
                 popTo(DeepSpaceMainFragment.class, false, new Runnable() {

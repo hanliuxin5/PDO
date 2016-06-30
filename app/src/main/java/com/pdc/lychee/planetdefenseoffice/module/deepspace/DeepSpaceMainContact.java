@@ -19,7 +19,7 @@ public interface DeepSpaceMainContact {
 
         void showLoading();
 
-        void showLoadError(String str);
+        void showLoadError(String str,boolean isRefresh);
 
         void showLoadFinish();
 

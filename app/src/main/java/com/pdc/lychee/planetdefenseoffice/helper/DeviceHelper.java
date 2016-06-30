@@ -1,4 +1,4 @@
-package com.pdc.lychee.planetdefenseoffice.manager;
+package com.pdc.lychee.planetdefenseoffice.helper;
 
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 /**
  * Created by lychee on 2016/5/5.
  */
-public class DeviceManager {
+public class DeviceHelper {
 
     private static ConnectivityManager mCnnManager;
     private static InputMethodManager mSoftInputManager;

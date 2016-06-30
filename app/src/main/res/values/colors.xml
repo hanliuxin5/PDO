@@ -11,6 +11,30 @@
     <color name="swipe_refresh_second">#ffffbb33</color>
     <color name="swipe_refresh_third">#ffff4444</color>
     <color name="swipe_refresh_four">#ffaa66cc</color>
+    <!--font color-->
+    <color name="font_black">#000</color>
+    <color name="font_black2">#302e2e</color>
+    <color name="font_gray">#797979</color>
+    <color name="font_white">#ffffff</color>
+
+    <!-- 红色 -->
+    <color name="red">#fd4d4d</color>
+    <!-- 黄色 -->
+    <color name="yellow">#FFFF00</color>
+    <!-- 绿色 -->
+    <color name="green">#00FF00</color>
+    <!-- 蓝色 -->
+    <color name="blue">#0099FF</color>
+    <!-- 橙色 -->
+    <color name="orange">#FFA500</color>
+    <!-- 黑色 -->
+    <color name="black">#000000</color>
+    <!-- 白色 -->
+    <color name="white">#FFFFFF</color>
+    <!-- 青色 -->
+    <color name="cyan">#00FFFF</color>
+    <!--灰色 -->
+    <color name="gray">#8c8c8c</color>
 
     <!--test color-->
     <color name="transparent_colorAccent">#BBFF4081</color>

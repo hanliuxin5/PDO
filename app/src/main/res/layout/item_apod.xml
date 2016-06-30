@@ -1,14 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="256dp"
-    android:padding="4dp">
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="2dp"
+    app:cardPreventCornerOverlap="false">
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-</FrameLayout>
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/apod_iv_organization_logo"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerVertical="true"
+                android:layout_margin="4dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/nasa" />
+
+            <TextView
+                android:id="@+id/apod_tv_organization_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="40dp"
+                android:text="@string/nasa_dp"
+                android:textColor="@color/font_black"
+                android:textSize="@dimen/font_2" />
+
+            <ImageView
+                android:id="@+id/apod_iv_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:src="@drawable/ic_more_vert_black_24dp" />
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/apod_iv_img"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:background="@color/white"
+            android:scaleType="centerInside"
+            tools:src="@drawable/img_normal_test" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/apod_tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="4dp"
+                android:textColor="@color/font_black"
+                android:textSize="@dimen/font_3"
+                tools:text="title" />
+
+            <TextView
+                android:id="@+id/apod_tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/apod_tv_title"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/font_black2"
+                android:textSize="@dimen/font_1"
+                tools:text="1993-02-24" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/apod_tv_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:textColor="@color/font_black2"
+            android:textSize="@dimen/font_1"
+            tools:text="我是很长很长的测试解释我是很长很长的测试解释我是很长很长的测试解释我是很长很长的测试解释" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

@@ -25,6 +25,5 @@ public class Appcation extends Application {
         _context = getApplicationContext();
         _resource = _context.getResources();
 //        LeakCanary.install(this);
-
     }
 }

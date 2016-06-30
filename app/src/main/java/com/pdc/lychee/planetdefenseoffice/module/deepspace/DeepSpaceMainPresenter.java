@@ -12,9 +12,6 @@ import com.trello.rxlifecycle.FragmentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.net.ssl.SSLException;
-
-import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -26,7 +23,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private final DeepSpaceMainContact.View mDeepSpaceMainView;
     private final DPRepository mDpRepository;
 
-    private String mDate = "";
+    private static String mDate = "";
     private boolean mIsRefresh;
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
@@ -62,29 +59,22 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        if (throwable instanceof HttpException) {
-                            HttpException httpException = (HttpException) throwable;
-                            if (httpException.code() == 400) {
-                                mDeepSpaceMainView.showLoadError("（400）无权访问当前日期！");
-                                mDeepSpaceMainView.showNoMoreDP();
-
-                            }
-                            if (httpException.code() == 500) {
-                                mDeepSpaceMainView.showLoadError("（500）内部错误");
-                                mDeepSpaceMainView.showNoMoreDP();
-                            }
-                        } else if (throwable instanceof SSLException) {
-                            mDeepSpaceMainView.showLoadError("网络出现问题");
-                        } else if (throwable instanceof XIAOHUException) {
+                        if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
-                                mDeepSpaceMainView.showLoadError("DP查询操作出错");
+                                mDeepSpaceMainView.showLoadError("DP查询操作出错", mIsRefresh);
                             }
-
                         } else {
-                            mDeepSpaceMainView.showLoadError("加载数据时出错");
+                            mDeepSpaceMainView.showLoadError("加载数据时出错", mIsRefresh);
                             LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
                         }
+                        if (mIsRefresh) {
+                            mDeepSpaceMainView.clearRecyclerView();
+                            loadSavedDP();
+                        } else {
+                            mDate = TimeUtil.theDayAfter(mDate);
+                        }
+                        mIsRefresh = false;
                     }
 
                     @Override
@@ -96,7 +86,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             } else {
                                 mDeepSpaceMainView.addDP(deepSpaceBean);
                             }
-                            mDate = deepSpaceBean.getDate();
+                            if (!deepSpaceBean.getDate().equals("400") && !deepSpaceBean.getDate().equals("500"))
+                                mDate = deepSpaceBean.getDate();
                         }
                     }
                 });
@@ -126,22 +117,18 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                         if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
-                                mDeepSpaceMainView.showLoadError("DP查询操作出错");
+                                mDeepSpaceMainView.showLoadError("DP查询操作出错", mIsRefresh);
                             }
                         } else {
-                            mDeepSpaceMainView.showLoadError("载入本地数据时出错");
+                            mDeepSpaceMainView.showLoadError("载入本地数据时出错---onError", mIsRefresh);
                             LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
                         }
                     }
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
-                        if (deepSpaceBean != null) {
-                            mDeepSpaceMainView.addDP(deepSpaceBean);
-                            mDate = deepSpaceBean.getDate();
-                        } else {
-                            onRefresh();
-                        }
+                        mDeepSpaceMainView.addDP(deepSpaceBean);
+                        mDate = deepSpaceBean.getDate();
                     }
                 });
 
@@ -166,7 +153,12 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @Override
     public void onLoadMore() {
         mDate = TimeUtil.theDayBefore(mDate);
+        LogUtil.d("准备加载更多：" + mDate);
 
+        if (TextUtils.isEmpty(mDate)) {
+            onRefresh();
+            return;
+        }
         mDeepSpaceMainView.showLoadMore();
         loadDP(mDate);
     }
@@ -176,6 +168,9 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         mDate = dateFormat.format(date);
+//        mDate = "2016-07-01";
+
+        LogUtil.d("下拉刷新：" + mDate);
 
         mDeepSpaceMainView.showRefresh();
         mIsRefresh = true;

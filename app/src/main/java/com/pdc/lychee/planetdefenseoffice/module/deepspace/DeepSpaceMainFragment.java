@@ -4,9 +4,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,11 +24,13 @@ import android.widget.LinearLayout;
 import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.base.fragment.BaseFragment;
+import com.pdc.lychee.planetdefenseoffice.module.MainActivity;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPLocalDataSource;
+import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPMemoryDataSource;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
+import com.pdc.lychee.planetdefenseoffice.utils.FixWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
-import com.pdc.lychee.planetdefenseoffice.utils.TestWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.pdc.lychee.planetdefenseoffice.utils.ToastUtil;
 import com.pdc.lychee.planetdefenseoffice.view.ErrorLayout;
@@ -45,10 +47,7 @@ import butterknife.ButterKnife;
  */
 public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMainContact.View {
 
-
-    //    @Bind(R.id.toolbar)
     Toolbar toolbar;
-    //    @Bind(R.id.appbar)
     AppBarLayout appbar;
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -58,6 +57,9 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     ErrorLayout errorFrame;
     @Bind(R.id.content_fl)
     FrameLayout contentFl;
+
+    private MainActivity activity;
+    DrawerLayout drawerLayout;
 
     private DeepSpaceMainContact.Presenter mPresenter;
     private DeepSpaceAdapter deepSpaceAdapter;
@@ -80,14 +82,22 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         View view = inflater.inflate(R.layout.fragment_deepspace, container, false);
         ButterKnife.bind(this, view);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) mContext;
+        activity = (MainActivity) mContext;
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+        toolbar.setTitle(R.string.deep_space_exploration);
         activity.setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.openDrawer();
+            }
+        });
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.tasks_fragment_menu, menu);
+        inflater.inflate(R.menu.dp_fragment_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -101,13 +111,15 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 LogUtil.d("重新加载：" + TimeUtil.theDayBefore(mPresenter.getDate()));
                 mPresenter.loadDP(TimeUtil.theDayBefore(mPresenter.getDate()));
                 break;
+
         }
         return true;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mPresenter = new DeepSpaceMainPresenter(DPRepository.getInstance(DPRemoteDataSource.getInstance(), DPLocalDataSource.getInstance(mContext)),
+        mPresenter = new DeepSpaceMainPresenter(DPRepository.getInstance(DPRemoteDataSource.getInstance(),
+                DPLocalDataSource.getInstance(mContext), DPMemoryDataSource.getInstance()),
                 this);
         refreshSwipe.setColorSchemeResources(
                 R.color.swipe_refresh_first, R.color.swipe_refresh_second,
@@ -116,12 +128,12 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         refreshSwipe.setOnRefreshListener(mPresenter);
         errorFrame.setOnFailedClickListener(mPresenter);
 
-        TestWrapContentLinearLayoutManager testWrapContentLinearLayoutManager = new TestWrapContentLinearLayoutManager(mContext);
-        testWrapContentLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        FixWrapContentLinearLayoutManager fixWrapContentLinearLayoutManager = new FixWrapContentLinearLayoutManager(mContext);
+        fixWrapContentLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
         deepSpaceAdapter.setOnLoadMoreListener(mPresenter);
 
-        recyclerView.setLayoutManager(testWrapContentLinearLayoutManager);
+        recyclerView.setLayoutManager(fixWrapContentLinearLayoutManager);
         recyclerView.setItemAnimator(defaultItemAnimator);
         recyclerView.setAdapter(deepSpaceAdapter);
 
@@ -168,19 +180,23 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
-    public void showLoadError(String str) {
+    public void showLoadError(String str, boolean isRefresh) {
         refreshSwipe.setRefreshing(false);
         refreshSwipe.setEnabled(true);
         mState = STATE_NONE;
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
+        if (!isRefresh) {
+            deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_ERROR);
+        } else {
+            deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
+        }
         deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
+
         if (deepSpaceAdapter.getDataSize() > 0) {
             ToastUtil.toast(str);
         } else {
             ToastUtil.toast(str);
             errorFrame.setState(ErrorLayout.LOAD_FAILED);
         }
-        deepSpaceAdapter.notifyDataSetChanged();
 
     }
 
@@ -189,7 +205,11 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         refreshSwipe.setRefreshing(false);
         refreshSwipe.setEnabled(true);
         mState = STATE_NONE;
-        errorFrame.setState(ErrorLayout.HIDE);
+        if (deepSpaceAdapter.getDataSize() > 0) {
+            errorFrame.setState(ErrorLayout.HIDE);
+        } else {
+            errorFrame.setState(ErrorLayout.LOAD_FAILED);
+        }
     }
 
     @Override

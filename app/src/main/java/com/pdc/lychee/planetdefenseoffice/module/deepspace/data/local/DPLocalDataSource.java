@@ -61,7 +61,9 @@ public class DPLocalDataSource {
                         DeepSpaceBean deepSpaceBean = null;
                         try {
                             deepSpaceBean = queryDP();
-                            subscriber.onNext(deepSpaceBean);
+                            if (deepSpaceBean != null) {
+                                subscriber.onNext(deepSpaceBean);
+                            }
                             subscriber.onCompleted();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -88,11 +90,13 @@ public class DPLocalDataSource {
             String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
             String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
             String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
+            String mediatype = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_MEDIATYPE));
             deepSpaceBean.setDate(date);
             deepSpaceBean.setExplanation(explanation);
             deepSpaceBean.setTitle(title);
             deepSpaceBean.setHdurl(hdurl);
             deepSpaceBean.setUrl(url);
+            deepSpaceBean.setMediaType(mediatype);
         }
         cursor.close();
 //        db.close();
@@ -114,11 +118,13 @@ public class DPLocalDataSource {
             String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
             String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
             String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
+            String mediatype = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_MEDIATYPE));
             deepSpaceBean.setDate(date);
             deepSpaceBean.setExplanation(explanation);
             deepSpaceBean.setTitle(title);
             deepSpaceBean.setHdurl(hdurl);
             deepSpaceBean.setUrl(url);
+            deepSpaceBean.setMediaType(mediatype);
         }
         cursor.close();
 //        db.close();
@@ -152,10 +158,12 @@ public class DPLocalDataSource {
                         ", " + DeepSpaceEntry.COLUMN_NAME_HDURL +
                         ", " + DeepSpaceEntry.COLUMN_NAME_TITLE +
                         ", " + DeepSpaceEntry.COLUMN_NAME_URL +
+                        ", " + DeepSpaceEntry.COLUMN_NAME_MEDIATYPE +
                         ")" +
-                        " values(?,?,?,?,?)",
+                        " values(?,?,?,?,?,?)",
                 new Object[]{deepSpaceBean.getDate(), deepSpaceBean.getExplanation(),
-                        deepSpaceBean.getHdurl(), deepSpaceBean.getTitle(), deepSpaceBean.getUrl()});
+                        deepSpaceBean.getHdurl(), deepSpaceBean.getTitle(),
+                        deepSpaceBean.getUrl(), deepSpaceBean.getMediaType()});
 //        db.close();
         return deepSpaceBean;
     }

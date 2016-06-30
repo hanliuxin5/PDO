@@ -1,8 +1,9 @@
 package com.pdc.lychee.planetdefenseoffice.base.activity;
 
 import android.os.Bundle;
+import android.view.Window;
 
-import com.pdc.lychee.planetdefenseoffice.manager.DeviceManager;
+import com.pdc.lychee.planetdefenseoffice.helper.DeviceHelper;
 
 
 /**
@@ -18,6 +19,7 @@ public abstract class BaseActivity extends BaseRxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         //装载布局
         setContentView(setContentView());
@@ -33,7 +35,7 @@ public abstract class BaseActivity extends BaseRxActivity {
         super.onPause();
         if (isFinishing()) {
             //隐藏软件键盘
-            DeviceManager.hideSoftInput(this, getCurrentFocus());
+            DeviceHelper.hideSoftInput(this, getCurrentFocus());
         }
     }
 
