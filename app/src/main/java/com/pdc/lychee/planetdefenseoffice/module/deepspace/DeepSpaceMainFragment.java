@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -31,9 +30,7 @@ import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPMemoryDa
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.FixWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
-import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
-import com.pdc.lychee.planetdefenseoffice.utils.ToastUtil;
-import com.pdc.lychee.planetdefenseoffice.view.ErrorLayout;
+import com.pdc.lychee.planetdefenseoffice.view.EmptyLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,18 +51,22 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @Bind(R.id.refresh_swipe)
     SwipeRefreshLayout refreshSwipe;
     @Bind(R.id.error_frame)
-    ErrorLayout errorFrame;
+    EmptyLayout errorFrame;
     @Bind(R.id.content_fl)
     FrameLayout contentFl;
 
-    private MainActivity activity;
-    DrawerLayout drawerLayout;
 
     private DeepSpaceMainContact.Presenter mPresenter;
     private DeepSpaceAdapter deepSpaceAdapter;
 
     public static DeepSpaceMainFragment newInstance() {
         return new DeepSpaceMainFragment();
+    }
+
+    @Override
+    public void setPresenter(DeepSpaceMainContact.Presenter presenter) {
+        if (presenter != null)
+            mPresenter = presenter;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         View view = inflater.inflate(R.layout.fragment_deepspace, container, false);
         ButterKnife.bind(this, view);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        activity = (MainActivity) mContext;
+        final MainActivity activity = (MainActivity) mContext;
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setTitle(R.string.deep_space_exploration);
         activity.setSupportActionBar(toolbar);
@@ -95,26 +96,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.dp_fragment_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_delete:
-                showDeletingDialog();
-                break;
-            case R.id.menu_refresh:
-                LogUtil.d("重新加载：" + TimeUtil.theDayBefore(mPresenter.getDate()));
-                mPresenter.loadDP(TimeUtil.theDayBefore(mPresenter.getDate()));
-                break;
-
-        }
-        return true;
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -126,7 +107,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 R.color.swipe_refresh_third, R.color.swipe_refresh_four
         );
         refreshSwipe.setOnRefreshListener(mPresenter);
-        errorFrame.setOnFailedClickListener(mPresenter);
+        errorFrame.setOnReloadClickListener(mPresenter);
 
         FixWrapContentLinearLayoutManager fixWrapContentLinearLayoutManager = new FixWrapContentLinearLayoutManager(mContext);
         fixWrapContentLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -146,101 +127,63 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
             mPresenter.start();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.dp_fragment_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_delete:
+                showDeletingDialog();
+                break;
+        }
+        return true;
+    }
+
+
     @SuppressWarnings("unchecked")
     @Override
     public void addDP(DeepSpaceBean deepSpaceBean) {
-        if (deepSpaceBean == null) {
-            return;
-        }
-        errorFrame.setState(ErrorLayout.HIDE);
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_MORE);
+        errorFrame.setState(EmptyLayout.HIDE);
+        setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
         deepSpaceAdapter.addItem(deepSpaceBean);
+
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void addDP(DeepSpaceBean deepSpaceBean, int position) {
-        if (deepSpaceBean == null) {
-            return;
-        }
-        errorFrame.setState(ErrorLayout.HIDE);
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_MORE);
+        errorFrame.setState(EmptyLayout.HIDE);
+        setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
         deepSpaceAdapter.addItem(deepSpaceBean, position);
     }
 
+
     @Override
-    public void showLoading() {
-        if (mState == STATE_REFRESHING)
-            return;
-        mState = STATE_REFRESHING;
-        refreshSwipe.setEnabled(false);
-        if (deepSpaceAdapter.getDataSize() == 0) {
-            errorFrame.setState(ErrorLayout.LOADING);
+    public void removeDP(String date) {
+        DeepSpaceBean deepSpaceBean = null;
+        boolean isExist = false;
+        for (int i = 0; i < deepSpaceAdapter.getItems().size(); i++) {
+            deepSpaceBean = (DeepSpaceBean) deepSpaceAdapter.getItem(i);
+            if (deepSpaceBean.getDate().equals(date)) {
+                isExist = true;
+                deepSpaceAdapter.removeItem(i);
+                LogUtil.i("删除日期：" + date + ",position：" + i);
+                break;
+            }
         }
+        if (!isExist)
+            LogUtil.i("当前日期不在列表中");
     }
 
     @Override
-    public void showLoadError(String str, boolean isRefresh) {
-        refreshSwipe.setRefreshing(false);
-        refreshSwipe.setEnabled(true);
-        mState = STATE_NONE;
-        if (!isRefresh) {
-            deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOAD_ERROR);
-        } else {
-            deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
-        }
-        deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
-
-        if (deepSpaceAdapter.getDataSize() > 0) {
-            ToastUtil.toast(str);
-        } else {
-            ToastUtil.toast(str);
-            errorFrame.setState(ErrorLayout.LOAD_FAILED);
-        }
-
+    public void clearRecyclerView() {
+        deepSpaceAdapter.clear();
     }
 
-    @Override
-    public void showLoadFinish() {
-        refreshSwipe.setRefreshing(false);
-        refreshSwipe.setEnabled(true);
-        mState = STATE_NONE;
-        if (deepSpaceAdapter.getDataSize() > 0) {
-            errorFrame.setState(ErrorLayout.HIDE);
-        } else {
-            errorFrame.setState(ErrorLayout.LOAD_FAILED);
-        }
-    }
-
-    @Override
-    public void showNoDp() {
-        errorFrame.setState(ErrorLayout.EMPTY_DATA);
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_HIDE);
-
-    }
-
-    @Override
-    public void showNoMoreDP() {
-        errorFrame.setState(ErrorLayout.HIDE);
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_NO_MORE);
-    }
-
-    @Override
-    public void showDPDetails() {
-        //进入dp详情
-    }
-
-
-    @Override
-    public void setPresenter(DeepSpaceMainContact.Presenter presenter) {
-        if (presenter != null)
-            mPresenter = presenter;
-    }
-
-    @Override
-    public void showReloadOnError() {
-        errorFrame.setState(ErrorLayout.LOADING);
-    }
 
     @Override
     public void showDeletingDialog() {
@@ -268,11 +211,39 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         builder1.show();
     }
 
+    @Override
+    public void showLoading() {
+        if (mState == STATE_REFRESHING)
+            return;
+        mState = STATE_REFRESHING;
+        refreshSwipe.setEnabled(false);
+        if (deepSpaceAdapter.getDataSize() == 0) {
+            errorFrame.setState(EmptyLayout.LOADING);
+        }
+    }
+
+    @Override
+    public void showLoadFinished(int type) {
+        refreshSwipe.setRefreshing(false);
+        refreshSwipe.setEnabled(true);
+        mState = STATE_NONE;
+        if (deepSpaceAdapter.getDataSize() > 0) {
+            errorFrame.setState(EmptyLayout.HIDE);
+        } else {
+            errorFrame.setState(type);
+        }
+    }
+
+    @Override
+    public void setFooterView(int type) {
+        deepSpaceAdapter.setState(type);
+        deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
+    }
 
     @Override
     public void showLoadMore() {
         if (mState == STATE_REFRESHING) {
-            deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_REFRESHING);
+            setFooterView(DeepSpaceAdapter.STATE_REFRESHING);
             return;
         }
         deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOADING);
@@ -288,25 +259,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
-    public void clearRecyclerView() {
-        deepSpaceAdapter.clear();
+    public void showReloadOnError() {
+        showLoading();
     }
-
-    @Override
-    public void removeDP(String date) {
-        DeepSpaceBean deepSpaceBean = null;
-        boolean isExist = false;
-        for (int i = 0; i < deepSpaceAdapter.getItems().size(); i++) {
-            deepSpaceBean = (DeepSpaceBean) deepSpaceAdapter.getItem(i);
-            if (deepSpaceBean.getDate().equals(date)) {
-                isExist = true;
-                deepSpaceAdapter.removeItem(i);
-                LogUtil.i("删除日期：" + date + ",position：" + i);
-                break;
-            }
-        }
-        if (!isExist)
-            LogUtil.i("当前日期不在列表中");
-    }
-
 }

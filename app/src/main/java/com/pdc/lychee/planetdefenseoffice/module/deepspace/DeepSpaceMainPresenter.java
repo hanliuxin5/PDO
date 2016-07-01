@@ -7,11 +7,13 @@ import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
 import com.pdc.lychee.planetdefenseoffice.retrofit.XIAOHUException;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
 import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
+import com.pdc.lychee.planetdefenseoffice.view.EmptyLayout;
 import com.trello.rxlifecycle.FragmentEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -32,9 +34,40 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         mDeepSpaceMainView.setPresenter(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        loadSavedDP();
+        mDpRepository.loadDP()
+                .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mDeepSpaceMainView.showLoading();
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<DeepSpaceBean>() {
+                    @Override
+                    public void onCompleted() {
+                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        if (throwable instanceof XIAOHUException) {
+                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
+                            LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                        }
+                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
+                    }
+
+                    @Override
+                    public void onNext(DeepSpaceBean deepSpaceBean) {
+                        mDeepSpaceMainView.addDP(deepSpaceBean);
+                    }
+                });
     }
 
     @SuppressWarnings("unchecked")
@@ -53,85 +86,37 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                 .subscribe(new Subscriber<DeepSpaceBean>() {
                     @Override
                     public void onCompleted() {
-                        mDeepSpaceMainView.showLoadFinish();
+                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        if (throwable instanceof XIAOHUException) {
+                        if (throwable instanceof HttpException) {
+                            HttpException httpException = (HttpException) throwable;
+                            LogUtil.d("loadDP---onError：" + httpException.code());
+                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+
+                        } else if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                            if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
-                                mDeepSpaceMainView.showLoadError("DP查询操作出错", mIsRefresh);
-                            }
-                        } else {
-                            mDeepSpaceMainView.showLoadError("加载数据时出错", mIsRefresh);
-                            LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
+                            LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                         }
+                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
+                        mIsRefresh = false;
+                    }
+
+                    @Override
+                    public void onNext(DeepSpaceBean deepSpaceBean) {
                         if (mIsRefresh) {
                             mDeepSpaceMainView.clearRecyclerView();
-                            loadSavedDP();
+                            mDeepSpaceMainView.addDP(deepSpaceBean);
                         } else {
-                            mDate = TimeUtil.theDayAfter(mDate);
+                            mDeepSpaceMainView.addDP(deepSpaceBean);
                         }
-                        mIsRefresh = false;
-                    }
 
-                    @Override
-                    public void onNext(DeepSpaceBean deepSpaceBean) {
-                        if (deepSpaceBean != null) {
-                            if (mIsRefresh) {
-                                mDeepSpaceMainView.clearRecyclerView();
-                                mDeepSpaceMainView.addDP(deepSpaceBean);
-                            } else {
-                                mDeepSpaceMainView.addDP(deepSpaceBean);
-                            }
-                            if (!deepSpaceBean.getDate().equals("400") && !deepSpaceBean.getDate().equals("500"))
-                                mDate = deepSpaceBean.getDate();
-                        }
                     }
                 });
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void loadSavedDP() {
-        mDpRepository.firstLoadDP()
-                .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mDeepSpaceMainView.showLoading();
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<DeepSpaceBean>() {
-                    @Override
-                    public void onCompleted() {
-                        mDeepSpaceMainView.showLoadFinish();
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        if (throwable instanceof XIAOHUException) {
-                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                            if (xiaohuException.getCode() == XIAOHUException.DB_QUERY) {
-                                mDeepSpaceMainView.showLoadError("DP查询操作出错", mIsRefresh);
-                            }
-                        } else {
-                            mDeepSpaceMainView.showLoadError("载入本地数据时出错---onError", mIsRefresh);
-                            LogUtil.e(throwable.getMessage() == null ? "未知错误" : throwable.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.addDP(deepSpaceBean);
-                        mDate = deepSpaceBean.getDate();
-                    }
-                });
-
     }
 
     @Override
@@ -145,36 +130,39 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
 
     @Override
-    public void onLoadFailedClick() {
+    public void onReloadClick() {
         mDeepSpaceMainView.showReloadOnError();
-        onRefresh();
+        LogUtil.d("点击刷新：" + mDate);
+        setDate();
+        loadDP(getDate());
     }
 
     @Override
     public void onLoadMore() {
+        mDeepSpaceMainView.showLoadMore();
         mDate = TimeUtil.theDayBefore(mDate);
         LogUtil.d("准备加载更多：" + mDate);
-
         if (TextUtils.isEmpty(mDate)) {
             onRefresh();
             return;
         }
-        mDeepSpaceMainView.showLoadMore();
         loadDP(mDate);
     }
 
     @Override
     public void onRefresh() {
+        LogUtil.d("下拉刷新：" + mDate);
+        mDeepSpaceMainView.showRefresh();
+        mIsRefresh = true;
+        setDate();
+        loadDP(getDate());
+    }
+
+    @Override
+    public void setDate() {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         mDate = dateFormat.format(date);
-//        mDate = "2016-07-01";
-
-        LogUtil.d("下拉刷新：" + mDate);
-
-        mDeepSpaceMainView.showRefresh();
-        mIsRefresh = true;
-        loadDP(mDate);
     }
 
     @Override

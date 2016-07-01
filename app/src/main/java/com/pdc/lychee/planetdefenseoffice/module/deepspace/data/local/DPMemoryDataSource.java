@@ -9,9 +9,9 @@ import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
  */
 public class DPMemoryDataSource {
 
-    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);//获取应用在系统中的最大内存分配,分配1/8的应用内存作为缓存空间
+    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);//获取应用在系统中的最大内存分配
 
-    final int cacheSize = maxMemory / 8;
+    final int cacheSize = maxMemory / 32;    //分配1/32的应用内存作为缓存空间
 
     private LruCache<String, DeepSpaceBean> cache = new LruCache<>(cacheSize);
 

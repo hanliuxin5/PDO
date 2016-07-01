@@ -30,7 +30,7 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
 
     @Override
     protected RecyclerView.ViewHolder onCreateDefaultViewHolder(ViewGroup parent, int type) {
-        return new APODViewHolder(mInflater.inflate(R.layout.item_apod, parent, false));
+        return new APODViewHolder(mInflater.inflate(R.layout.item_apod_image, parent, false));
     }
 
     @Override

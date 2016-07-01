@@ -41,7 +41,7 @@ public class DPRepository implements DPDataSource {
     }
 
     @Override
-    public Observable firstLoadDP() {
+    public Observable loadDP() {
         return mDPsLocalDataSource.getDP()
                 .subscribeOn(Schedulers.io());
     }
@@ -64,7 +64,7 @@ public class DPRepository implements DPDataSource {
                     public void call(DeepSpaceBean deepSpaceBean) {
                         if (deepSpaceBean != null) {
                             mDpMemoryDataSource.put(deepSpaceBean.getDate(), deepSpaceBean);
-                            LogUtil.i("diskWithSave获取到并保存" + deepSpaceBean.getDate());
+                            LogUtil.i("diskWithSave获取到并保存到内存" + deepSpaceBean.getDate());
                         }
                     }
                 });
@@ -74,7 +74,7 @@ public class DPRepository implements DPDataSource {
                     public void call(DeepSpaceBean deepSpaceBean) {
                         if (!deepSpaceBean.getDate().equals("400") && !deepSpaceBean.getDate().equals("500")) {
                             saveDP(deepSpaceBean);
-                            LogUtil.i("networkWithSave获取到并保存" + deepSpaceBean.getDate());
+                            LogUtil.i("networkWithSave获取到并保存到硬盘和内存" + deepSpaceBean.getDate());
                         } else {
                             LogUtil.i("networkWithSave获取到不保存" + deepSpaceBean.getDate());
                         }

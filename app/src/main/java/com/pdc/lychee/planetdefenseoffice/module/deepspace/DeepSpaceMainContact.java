@@ -5,7 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
 import com.pdc.lychee.planetdefenseoffice.base.BasePresenter;
 import com.pdc.lychee.planetdefenseoffice.base.BaseView;
-import com.pdc.lychee.planetdefenseoffice.view.ErrorLayout;
+import com.pdc.lychee.planetdefenseoffice.view.EmptyLayout;
 
 /**
  * Created by lychee on 2016/6/16.
@@ -17,41 +17,34 @@ public interface DeepSpaceMainContact {
 
         void addDP(DeepSpaceBean deepSpaceBean, int position);
 
+        void clearRecyclerView();
+
+        void removeDP(String date);
+
+        void showDeletingDialog();
+
         void showLoading();
 
-        void showLoadError(String str,boolean isRefresh);
+        void showLoadFinished(int type);
 
-        void showLoadFinish();
-
-        void showNoDp();
-
-        void showDPDetails();
-
-        void showNoMoreDP();
+        void setFooterView(int type);
 
         void showLoadMore();
 
         void showRefresh();
 
         void showReloadOnError();
-
-        void showDeletingDialog();
-
-        void clearRecyclerView();
-
-        void removeDP(String date);
-
     }
 
     interface Presenter extends BasePresenter,
-            SwipeRefreshLayout.OnRefreshListener, ErrorLayout.OnFailedClickListener, DeepSpaceAdapter.OnLoadMoreListener {
+            SwipeRefreshLayout.OnRefreshListener, EmptyLayout.OnReloadClickListener, DeepSpaceAdapter.OnLoadMoreListener {
         void loadDP(String date);
-
-        void loadSavedDP();
 
         void deleteDP(String date);
 
         String getDate();
+
+        void setDate();
 
     }
 }

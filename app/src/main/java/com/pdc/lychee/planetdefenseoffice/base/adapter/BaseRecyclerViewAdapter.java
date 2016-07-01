@@ -23,13 +23,16 @@ import butterknife.ButterKnife;
  * Created by lychee on 2016/6/21.
  */
 public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
+
     public static final int STATE_NO_MORE = 1;
+
     public static final int STATE_LOAD_MORE = 2;
+    public static final int STATE_LOADING = 8;
+
     public static final int STATE_INVALID_NETWORK = 3;
     public static final int STATE_HIDE = 5;
     public static final int STATE_REFRESHING = 6;
     public static final int STATE_LOAD_ERROR = 7;
-    public static final int STATE_LOADING = 8;
 
     public final int BEHAVIOR_MODE;
 

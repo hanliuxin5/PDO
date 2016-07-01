@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.pdc.lychee.planetdefenseoffice.view.ErrorLayout
+        <com.pdc.lychee.planetdefenseoffice.view.EmptyLayout
             android:id="@+id/error_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

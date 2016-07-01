@@ -13,7 +13,7 @@ import com.pdc.lychee.planetdefenseoffice.R;
 /**
  * Created by thanatos on 15-9-22.
  */
-public class ErrorLayout extends FrameLayout {
+public class EmptyLayout extends FrameLayout {
 
     public static final int HIDE = 0;
     public static final int LOADING = 1;
@@ -24,15 +24,15 @@ public class ErrorLayout extends FrameLayout {
     private ProgressBar probar;
     private TextView vText;
     private TextView vLoadFailure;
-    private OnFailedClickListener listener;
+    private OnReloadClickListener listener;
     private int mState = HIDE;
 
-    public ErrorLayout(Context context) {
+    public EmptyLayout(Context context) {
         super(context);
         initView();
     }
 
-    public ErrorLayout(Context context, AttributeSet attrs) {
+    public EmptyLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
@@ -48,7 +48,7 @@ public class ErrorLayout extends FrameLayout {
             @Override
             public void onClick(View v) {
                 if (listener != null)
-                    listener.onLoadFailedClick();
+                    listener.onReloadClick();
             }
         });
 
@@ -90,7 +90,7 @@ public class ErrorLayout extends FrameLayout {
             case EMPTY_DATA:
                 setVisibility(VISIBLE);
                 vLoadFailure.setVisibility(VISIBLE);
-                vLoadFailure.setText("没有接收到任何数据");
+                vLoadFailure.setText("没有任何数据,点击加载");
                 vText.setVisibility(GONE);
                 probar.setVisibility(GONE);
         }
@@ -100,14 +100,14 @@ public class ErrorLayout extends FrameLayout {
         return mState;
     }
 
-    public void setOnFailedClickListener(OnFailedClickListener listener) {
+    public void setOnReloadClickListener(OnReloadClickListener listener) {
         this.listener = listener;
     }
 
     /**
      * 点击加载失败的图片重新加载
      */
-    public interface OnFailedClickListener {
-        void onLoadFailedClick();
+    public interface OnReloadClickListener {
+        void onReloadClick();
     }
 }

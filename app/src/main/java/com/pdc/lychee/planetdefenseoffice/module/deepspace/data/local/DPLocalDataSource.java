@@ -42,7 +42,9 @@ public class DPLocalDataSource {
                         DeepSpaceBean deepSpaceBean = null;
                         try {
                             deepSpaceBean = queryDP(date);
-                            subscriber.onNext(deepSpaceBean);
+                            if (deepSpaceBean != null) {
+                                subscriber.onNext(deepSpaceBean);
+                            }
                             subscriber.onCompleted();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -108,7 +110,7 @@ public class DPLocalDataSource {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + DeepSpaceEntry.TABLE_NAME +
-                        " ORDER BY " + DeepSpaceEntry.COLUMN_NAME_DATE + " DESC",
+                        " ORDER BY " + DeepSpaceEntry.COLUMN_NAME_DATE + " DESC LIMIT " + 1,
                 null);
 
         if (cursor.moveToFirst()) {

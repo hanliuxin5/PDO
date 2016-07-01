@@ -11,12 +11,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="4dp">
 
             <ImageView
                 android:id="@+id/apod_iv_organization_logo"
@@ -55,14 +55,15 @@
         <ImageView
             android:id="@+id/apod_iv_img"
             android:layout_width="match_parent"
-            android:layout_height="256dp"
+            android:layout_height="224dp"
             android:background="@color/white"
             android:scaleType="centerInside"
             tools:src="@drawable/img_normal_test" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/apod_tv_title"

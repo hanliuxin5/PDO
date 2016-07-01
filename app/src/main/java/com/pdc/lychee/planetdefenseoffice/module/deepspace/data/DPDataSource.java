@@ -16,7 +16,12 @@ public interface DPDataSource {
      */
     Observable getDP(String date);
 
-    Observable firstLoadDP();
+    /**
+     * 初始化界面加载
+     *
+     * @return
+     */
+    Observable loadDP();
 
     void saveDP(DeepSpaceBean deepSpaceBean);
 
