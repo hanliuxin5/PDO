@@ -1,7 +1,5 @@
 package com.pdc.lychee.planetdefenseoffice.retrofit;
 
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -23,9 +21,9 @@ public class PDORetrofit {
             return apiService;
         } else {
             okHttpClient = new OkHttpClient.Builder()
-                    .readTimeout(10, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .connectTimeout(7, TimeUnit.SECONDS)
+//                    .readTimeout(10, TimeUnit.SECONDS)
+//                    .writeTimeout(10, TimeUnit.SECONDS)
+//                    .connectTimeout(7, TimeUnit.SECONDS)
                     .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                     .build();
             retrofit = new Retrofit.Builder()

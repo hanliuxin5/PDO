@@ -66,6 +66,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
                         mDeepSpaceMainView.addDP(deepSpaceBean);
+                        mDate = deepSpaceBean.getDate();
                     }
                 });
     }

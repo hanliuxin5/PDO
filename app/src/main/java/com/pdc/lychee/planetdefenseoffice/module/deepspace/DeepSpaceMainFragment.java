@@ -74,7 +74,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         super.onCreate(savedInstanceState);
         deepSpaceAdapter = new DeepSpaceAdapter(mContext, new ArrayList<DeepSpaceBean>(), DeepSpaceAdapter.ONLY_FOOTER);
         setRetainInstance(true);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -237,7 +237,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @Override
     public void setFooterView(int type) {
         deepSpaceAdapter.setState(type);
-        deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount());
+        deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount() - 1);
     }
 
     @Override
