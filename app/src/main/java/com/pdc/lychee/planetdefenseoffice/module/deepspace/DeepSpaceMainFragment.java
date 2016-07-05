@@ -16,12 +16,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
+import com.pdc.lychee.planetdefenseoffice.base.adapter.BaseRecyclerViewAdapter;
 import com.pdc.lychee.planetdefenseoffice.base.fragment.BaseFragment;
 import com.pdc.lychee.planetdefenseoffice.module.MainActivity;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
@@ -117,6 +119,8 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
         recyclerView.setLayoutManager(fixWrapContentLinearLayoutManager);
         recyclerView.setItemAnimator(defaultItemAnimator);
+        recyclerView.setItemViewCacheSize(5);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(deepSpaceAdapter);
 
     }
@@ -141,7 +145,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 showDeletingDialog();
                 break;
             case R.id.menu_repeat:
-                mPresenter.onLoadMore();
+                mPresenter.loadDP(mPresenter.getDate());
                 break;
         }
         return true;

@@ -41,10 +41,12 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
         if (deepSpaceBean.getMediaType() != null && deepSpaceBean.getMediaType().equals("image")) {
             vh.apodIvImg.setVisibility(View.VISIBLE);
             Picasso p = Picasso.with(mContext);
-//            p.setIndicatorsEnabled(true);
+            p.setIndicatorsEnabled(true);
             p.load(deepSpaceBean.getUrl())
+                    .fit()
+                    .centerInside()
                     .into(vh.apodIvImg);
-            LogUtil.d("正在加载图片：" + deepSpaceBean.getUrl());
+            LogUtil.d("正在加载照片：" + deepSpaceBean.getUrl());
         } else {
             vh.apodIvImg.setVisibility(View.INVISIBLE);
             LogUtil.d("不是照片：" + deepSpaceBean.getUrl());

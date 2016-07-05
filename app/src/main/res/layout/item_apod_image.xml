@@ -57,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="224dp"
             android:background="@color/white"
-            android:scaleType="centerInside"
             tools:src="@drawable/img_normal_test" />
 
         <RelativeLayout
