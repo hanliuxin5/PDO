@@ -44,7 +44,7 @@ public interface DeepSpaceMainContact {
 
         String getDate();
 
-        void setDate();
+        void setDate(String date);
 
     }
 }

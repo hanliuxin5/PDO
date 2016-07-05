@@ -30,6 +30,7 @@ import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPMemoryDa
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.FixWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
+import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.pdc.lychee.planetdefenseoffice.view.EmptyLayout;
 
 import java.text.SimpleDateFormat;
@@ -74,7 +75,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         super.onCreate(savedInstanceState);
         deepSpaceAdapter = new DeepSpaceAdapter(mContext, new ArrayList<DeepSpaceBean>(), DeepSpaceAdapter.ONLY_FOOTER);
         setRetainInstance(true);
-//        setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -138,6 +139,9 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         switch (item.getItemId()) {
             case R.id.menu_delete:
                 showDeletingDialog();
+                break;
+            case R.id.menu_repeat:
+                mPresenter.loadDP(mPresenter.getDate());
                 break;
         }
         return true;
@@ -231,6 +235,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
             errorFrame.setState(EmptyLayout.HIDE);
         } else {
             errorFrame.setState(type);
+            setFooterView(DeepSpaceAdapter.STATE_HIDE);
         }
     }
 
@@ -243,7 +248,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @Override
     public void showLoadMore() {
         if (mState == STATE_REFRESHING) {
-            setFooterView(DeepSpaceAdapter.STATE_REFRESHING);
+//            setFooterView(DeepSpaceAdapter.STATE_REFRESHING);
             return;
         }
         deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOADING);

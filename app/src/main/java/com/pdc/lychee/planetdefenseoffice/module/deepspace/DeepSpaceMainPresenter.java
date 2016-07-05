@@ -13,6 +13,8 @@ import com.trello.rxlifecycle.FragmentEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.net.ssl.SSLException;
+
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -43,6 +45,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     @Override
                     public void call() {
                         mDeepSpaceMainView.showLoading();
+
                     }
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -51,6 +54,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     @Override
                     public void onCompleted() {
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
+                        mDate = TimeUtil.theDayBefore(mDate);
+
                     }
 
                     @Override
@@ -89,6 +94,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     public void onCompleted() {
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
+                        mDate = TimeUtil.theDayBefore(mDate);
+
                     }
 
                     @Override
@@ -96,13 +103,16 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                         if (throwable instanceof HttpException) {
                             HttpException httpException = (HttpException) throwable;
                             LogUtil.d("loadDP---onError：" + httpException.code());
-                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
 
                         } else if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
-                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                        } else if (throwable instanceof SSLException) {
+                            LogUtil.d("loadDP---onError：SSL握手失败");
                         }
+
+                        LogUtil.d("loadDP---onError：" + throwable.getMessage());
+                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
                     }
@@ -115,7 +125,6 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                         } else {
                             mDeepSpaceMainView.addDP(deepSpaceBean);
                         }
-
                     }
                 });
     }
@@ -134,14 +143,14 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     public void onReloadClick() {
         mDeepSpaceMainView.showReloadOnError();
         LogUtil.d("点击刷新：" + mDate);
-        setDate();
+        setDate("");
         loadDP(getDate());
     }
 
     @Override
     public void onLoadMore() {
         mDeepSpaceMainView.showLoadMore();
-        mDate = TimeUtil.theDayBefore(mDate);
+//        mDate = TimeUtil.theDayBefore(mDate);
         LogUtil.d("准备加载更多：" + mDate);
         if (TextUtils.isEmpty(mDate)) {
             onRefresh();
@@ -152,18 +161,22 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
     @Override
     public void onRefresh() {
-        LogUtil.d("下拉刷新：" + mDate);
         mDeepSpaceMainView.showRefresh();
         mIsRefresh = true;
-        setDate();
+        setDate("");
+        LogUtil.d("下拉刷新：" + mDate);
         loadDP(getDate());
     }
 
     @Override
-    public void setDate() {
-        Date date = new Date();
+    public void setDate(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        mDate = dateFormat.format(date);
+        if (TextUtils.isEmpty(date)) {
+            Date date1 = new Date();
+            mDate = dateFormat.format(date1);
+        } else {
+            mDate = date;
+        }
     }
 
     @Override
