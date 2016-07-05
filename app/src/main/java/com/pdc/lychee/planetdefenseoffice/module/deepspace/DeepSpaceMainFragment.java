@@ -141,7 +141,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 showDeletingDialog();
                 break;
             case R.id.menu_repeat:
-                mPresenter.loadDP(mPresenter.getDate());
+                mPresenter.onLoadMore();
                 break;
         }
         return true;
@@ -248,7 +248,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @Override
     public void showLoadMore() {
         if (mState == STATE_REFRESHING) {
-//            setFooterView(DeepSpaceAdapter.STATE_REFRESHING);
             return;
         }
         deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOADING);

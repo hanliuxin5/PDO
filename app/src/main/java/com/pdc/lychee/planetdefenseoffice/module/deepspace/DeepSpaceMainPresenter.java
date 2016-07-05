@@ -1,5 +1,6 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace;
 
+import android.support.design.widget.BottomSheetDialog;
 import android.text.TextUtils;
 
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
@@ -28,7 +29,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private final DPRepository mDpRepository;
 
     private static String mDate = "";
-    private boolean mIsRefresh;
+    private boolean mIsRefresh = false;
+    private boolean mIsLoadMore = false;
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
         mDeepSpaceMainView = deepSpaceMainView;
@@ -54,8 +56,6 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     @Override
                     public void onCompleted() {
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
-                        mDate = TimeUtil.theDayBefore(mDate);
-
                     }
 
                     @Override
@@ -70,8 +70,10 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
+                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
                         mDeepSpaceMainView.addDP(deepSpaceBean);
                         mDate = deepSpaceBean.getDate();
+
                     }
                 });
     }
@@ -94,8 +96,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     public void onCompleted() {
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
-                        mDate = TimeUtil.theDayBefore(mDate);
-
+                        mIsLoadMore = false;
                     }
 
                     @Override
@@ -103,28 +104,44 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                         if (throwable instanceof HttpException) {
                             HttpException httpException = (HttpException) throwable;
                             LogUtil.d("loadDP---onError：" + httpException.code());
-
+                            if (mIsLoadMore) {
+                                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                            }
+                            if (mIsRefresh) {
+                                mDeepSpaceMainView.clearRecyclerView();
+                                start();
+                            }
+                        } else if (throwable instanceof SSLException) {
+                            LogUtil.d("loadDP---onError：SSL握手失败");
+                            if (mIsLoadMore) {
+                                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                            }
+                            if (mIsRefresh) {
+                                mDeepSpaceMainView.clearRecyclerView();
+                               start();
+                            }
                         } else if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
-                        } else if (throwable instanceof SSLException) {
-                            LogUtil.d("loadDP---onError：SSL握手失败");
+                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                         }
-
-                        LogUtil.d("loadDP---onError：" + throwable.getMessage());
-                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                        LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + mDate);
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
+                        mIsLoadMore = false;
                     }
 
                     @Override
                     public void onNext(DeepSpaceBean deepSpaceBean) {
+                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
                         if (mIsRefresh) {
                             mDeepSpaceMainView.clearRecyclerView();
                             mDeepSpaceMainView.addDP(deepSpaceBean);
+
                         } else {
                             mDeepSpaceMainView.addDP(deepSpaceBean);
                         }
+                        mDate = deepSpaceBean.getDate();
                     }
                 });
     }
@@ -142,27 +159,28 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @Override
     public void onReloadClick() {
         mDeepSpaceMainView.showReloadOnError();
-        LogUtil.d("点击刷新：" + mDate);
+        mDeepSpaceMainView.clearRecyclerView();
         setDate("");
+        LogUtil.d("点击刷新：" + mDate);
         loadDP(getDate());
     }
 
     @Override
     public void onLoadMore() {
+        mIsLoadMore = true;
+        mIsRefresh = false;
         mDeepSpaceMainView.showLoadMore();
-//        mDate = TimeUtil.theDayBefore(mDate);
+        setDate(TimeUtil.theDayBefore(mDate));
         LogUtil.d("准备加载更多：" + mDate);
-        if (TextUtils.isEmpty(mDate)) {
-            onRefresh();
-            return;
-        }
-        loadDP(mDate);
+        loadDP(getDate());
     }
 
     @Override
     public void onRefresh() {
-        mDeepSpaceMainView.showRefresh();
         mIsRefresh = true;
+        mIsLoadMore = false;
+        mDeepSpaceMainView.showRefresh();
+
         setDate("");
         LogUtil.d("下拉刷新：" + mDate);
         loadDP(getDate());
