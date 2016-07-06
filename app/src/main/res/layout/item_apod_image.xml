@@ -55,8 +55,10 @@
         <ImageView
             android:id="@+id/apod_iv_img"
             android:layout_width="match_parent"
-            android:layout_height="224dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:background="@color/white"
+            android:minHeight="224dp"
             tools:src="@drawable/img_normal_test" />
 
         <RelativeLayout

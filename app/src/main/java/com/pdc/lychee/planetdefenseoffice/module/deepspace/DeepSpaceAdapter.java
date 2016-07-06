@@ -35,7 +35,7 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
 
     @Override
     protected void onBindDefaultViewHolder(RecyclerView.ViewHolder holder, int position) {
-        APODViewHolder vh = (APODViewHolder) holder;
+        final APODViewHolder vh = (APODViewHolder) holder;
         DeepSpaceBean deepSpaceBean = (DeepSpaceBean) items.get(position);
         //照片
         if (deepSpaceBean.getMediaType() != null && deepSpaceBean.getMediaType().equals("image")) {
@@ -43,8 +43,6 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
             Picasso p = Picasso.with(mContext);
             p.setIndicatorsEnabled(true);
             p.load(deepSpaceBean.getUrl())
-                    .fit()
-                    .centerInside()
                     .into(vh.apodIvImg);
             LogUtil.d("正在加载照片：" + deepSpaceBean.getUrl());
         } else {
