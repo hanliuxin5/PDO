@@ -16,6 +16,7 @@ import java.util.Date;
 import javax.net.ssl.SSLException;
 
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -30,11 +31,91 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     private static String mDate = "";
     private boolean mIsRefresh = false;
     private boolean mIsLoadMore = false;
+    private Observer<DeepSpaceBean> load;
+    private Observer<DeepSpaceBean> start;
 
     public DeepSpaceMainPresenter(DPRepository dpRepository, DeepSpaceMainContact.View deepSpaceMainView) {
         mDeepSpaceMainView = deepSpaceMainView;
         mDpRepository = dpRepository;
         mDeepSpaceMainView.setPresenter(this);
+        start = new Subscriber<DeepSpaceBean>() {
+            @Override
+            public void onCompleted() {
+                mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (throwable instanceof XIAOHUException) {
+                    XIAOHUException xiaohuException = (XIAOHUException) throwable;
+                    LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                    mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                }
+                mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
+            }
+
+            @Override
+            public void onNext(DeepSpaceBean deepSpaceBean) {
+                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
+                mDeepSpaceMainView.addDP(deepSpaceBean);
+                mDate = deepSpaceBean.getDate();
+
+            }
+        };
+        load = new Observer<DeepSpaceBean>() {
+            @Override
+            public void onCompleted() {
+                mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
+                mIsRefresh = false;
+                mIsLoadMore = false;
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                if (throwable instanceof HttpException) {
+                    HttpException httpException = (HttpException) throwable;
+                    LogUtil.d("loadDP---onError：" + httpException.code());
+                    if (mIsLoadMore) {
+                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                    }
+                    if (mIsRefresh) {
+                        mDeepSpaceMainView.clearRecyclerView();
+                        start();
+                    }
+                } else if (throwable instanceof SSLException) {
+                    LogUtil.d("loadDP---onError：SSL握手失败");
+                    if (mIsLoadMore) {
+                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                    }
+                    if (mIsRefresh) {
+                        mDeepSpaceMainView.clearRecyclerView();
+                        start();
+                    }
+                } else if (throwable instanceof XIAOHUException) {
+                    XIAOHUException xiaohuException = (XIAOHUException) throwable;
+                    LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                    mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
+                }
+                LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
+                mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
+                mIsRefresh = false;
+                mIsLoadMore = false;
+            }
+
+            @Override
+            public void onNext(DeepSpaceBean deepSpaceBean) {
+                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
+                if (mIsRefresh) {
+                    mDeepSpaceMainView.clearRecyclerView();
+                    mDeepSpaceMainView.addDP(deepSpaceBean);
+
+                } else {
+                    mDeepSpaceMainView.addDP(deepSpaceBean);
+                }
+                mDate = deepSpaceBean.getDate();
+            }
+        };
+
     }
 
     @SuppressWarnings("unchecked")
@@ -51,30 +132,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<DeepSpaceBean>() {
-                    @Override
-                    public void onCompleted() {
-                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        if (throwable instanceof XIAOHUException) {
-                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                            LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
-                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
-                        }
-                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
-                    }
-
-                    @Override
-                    public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
-                        mDeepSpaceMainView.addDP(deepSpaceBean);
-                        mDate = deepSpaceBean.getDate();
-
-                    }
-                });
+                .subscribe(start);
     }
 
     @SuppressWarnings("unchecked")
@@ -90,59 +148,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<DeepSpaceBean>() {
-                    @Override
-                    public void onCompleted() {
-                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
-                        mIsRefresh = false;
-                        mIsLoadMore = false;
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        if (throwable instanceof HttpException) {
-                            HttpException httpException = (HttpException) throwable;
-                            LogUtil.d("loadDP---onError：" + httpException.code());
-                            if (mIsLoadMore) {
-                                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
-                            }
-                            if (mIsRefresh) {
-                                mDeepSpaceMainView.clearRecyclerView();
-                                start();
-                            }
-                        } else if (throwable instanceof SSLException) {
-                            LogUtil.d("loadDP---onError：SSL握手失败");
-                            if (mIsLoadMore) {
-                                mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
-                            }
-                            if (mIsRefresh) {
-                                mDeepSpaceMainView.clearRecyclerView();
-                                start();
-                            }
-                        } else if (throwable instanceof XIAOHUException) {
-                            XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                            LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
-                            mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
-                        }
-                        LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
-                        mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
-                        mIsRefresh = false;
-                        mIsLoadMore = false;
-                    }
-
-                    @Override
-                    public void onNext(DeepSpaceBean deepSpaceBean) {
-                        mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
-                        if (mIsRefresh) {
-                            mDeepSpaceMainView.clearRecyclerView();
-                            mDeepSpaceMainView.addDP(deepSpaceBean);
-
-                        } else {
-                            mDeepSpaceMainView.addDP(deepSpaceBean);
-                        }
-                        mDate = deepSpaceBean.getDate();
-                    }
-                });
+                .subscribe(load);
     }
 
     @Override
@@ -193,9 +199,9 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if (TextUtils.isEmpty(date)) {
             Date date1 = new Date();
-            mDate = dateFormat.format(date1);
+//            mDate = dateFormat.format(date1);
             //考虑到时差问题和接口，默认刷新日期为UTC-8日期前一天
-//            mDate = TimeUtil.theDayBefore(dateFormat.format(date1));
+            mDate = TimeUtil.theDayBefore(dateFormat.format(date1));
         } else {
             mDate = date;
         }

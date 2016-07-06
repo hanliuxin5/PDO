@@ -198,13 +198,11 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
     public final void addItem(T t) {
         items.add(items.size() == 0 ? 0 : items.size(), t);
         notifyItemInserted(getIndexFromData(items.size() == 0 ? 0 : items.size()));
-//        notifyItemRangeInserted(getIndexFromData(items.size()), getIndexFromData(items.size()));
     }
 
     public final void addItem(T t, int index) {
         items.add(index, t);
         notifyItemInserted(getIndexFromData(index));
-//        notifyItemRangeInserted(getIndexFromData(index), getIndexFromData(items.size()));
     }
 
     public final void addItems(List<T> objs) {

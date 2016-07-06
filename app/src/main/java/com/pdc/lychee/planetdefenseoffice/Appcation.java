@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 
-import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
-import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -37,9 +35,10 @@ public class Appcation extends Application {
 
     private void setupPicasso() {
         Picasso picasso = new Picasso.Builder(this)
-                .memoryCache(new LruCache(cacheSize))
+//                .memoryCache(new LruCache(cacheSize))
+                .loggingEnabled(true)
                 .build();
-        LogUtil.d("Picasso---cacheSize:" + cacheSize);
+//        LogUtil.d("Picasso---cacheSize:" + cacheSize);
         Picasso.setSingletonInstance(picasso);
     }
 }

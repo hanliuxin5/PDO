@@ -162,8 +162,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @SuppressWarnings("unchecked")
     @Override
     public void addDP(DeepSpaceBean deepSpaceBean) {
-        errorFrame.setState(EmptyLayout.HIDE);
-        setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
         deepSpaceAdapter.addItem(deepSpaceBean);
 
     }
@@ -171,8 +169,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @SuppressWarnings("unchecked")
     @Override
     public void addDP(DeepSpaceBean deepSpaceBean, int position) {
-        errorFrame.setState(EmptyLayout.HIDE);
-        setFooterView(DeepSpaceAdapter.STATE_LOAD_MORE);
         deepSpaceAdapter.addItem(deepSpaceBean, position);
     }
 
