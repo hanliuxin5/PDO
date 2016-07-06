@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF980D</color>
-    <color name="colorPrimaryDark">#FFCC8D</color>
-    <color name="colorAccent">#F57C0D</color>
+    <color name="colorPrimary">#00bcd4</color>
+    <color name="colorPrimaryDark">#00838f</color>
+    <color name="colorAccent">#b2ebf2</color>
     <color name="color_co1">#FFF3ED</color>
     <!--base color setting-->
     <color name="transparent">#00000000</color>
@@ -38,8 +38,7 @@
 
     <!--test color-->
     <color name="transparent_colorAccent">#BBFF4081</color>
-    <color name="color_test1">#FF980D</color>
-    <color name="color_test2">#FFCC8D</color>
-    <color name="color_test3">#F57C0D</color>
-    <color name="color_test4">#FFF3ED</color>
+    <color name="color_test1">#00bcd4</color>
+    <color name="color_test2">#00838f</color>
+    <color name="color_test3">#b2ebf2</color>
 </resources>

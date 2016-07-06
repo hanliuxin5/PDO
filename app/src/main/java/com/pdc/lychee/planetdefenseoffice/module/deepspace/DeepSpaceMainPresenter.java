@@ -1,6 +1,5 @@
 package com.pdc.lychee.planetdefenseoffice.module.deepspace;
 
-import android.support.design.widget.BottomSheetDialog;
 import android.text.TextUtils;
 
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
@@ -118,14 +117,14 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                             }
                             if (mIsRefresh) {
                                 mDeepSpaceMainView.clearRecyclerView();
-                               start();
+                                start();
                             }
                         } else if (throwable instanceof XIAOHUException) {
                             XIAOHUException xiaohuException = (XIAOHUException) throwable;
                             LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
                             mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                         }
-                        LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + mDate);
+                        LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
                         mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                         mIsRefresh = false;
                         mIsLoadMore = false;
@@ -158,10 +157,13 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
     @Override
     public void onReloadClick() {
+        mIsRefresh = true;
+        mIsLoadMore = false;
         mDeepSpaceMainView.showReloadOnError();
         mDeepSpaceMainView.clearRecyclerView();
+
         setDate("");
-        LogUtil.d("点击刷新：" + mDate);
+        LogUtil.d("点击刷新：" + getDate());
         loadDP(getDate());
     }
 
@@ -182,7 +184,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         mDeepSpaceMainView.showRefresh();
 
         setDate("");
-        LogUtil.d("下拉刷新：" + mDate);
+        LogUtil.d("下拉刷新：" + getDate());
         loadDP(getDate());
     }
 
@@ -192,6 +194,8 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         if (TextUtils.isEmpty(date)) {
             Date date1 = new Date();
             mDate = dateFormat.format(date1);
+            //考虑到时差问题和接口，默认刷新日期为UTC-8日期前一天
+//            mDate = TimeUtil.theDayBefore(dateFormat.format(date1));
         } else {
             mDate = date;
         }

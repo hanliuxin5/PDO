@@ -16,14 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.a_javabean.DeepSpaceBean;
-import com.pdc.lychee.planetdefenseoffice.base.adapter.BaseRecyclerViewAdapter;
 import com.pdc.lychee.planetdefenseoffice.base.fragment.BaseFragment;
 import com.pdc.lychee.planetdefenseoffice.module.MainActivity;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.DPRepository;
@@ -32,7 +30,6 @@ import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local.DPMemoryDa
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.data.remote.DPRemoteDataSource;
 import com.pdc.lychee.planetdefenseoffice.utils.FixWrapContentLinearLayoutManager;
 import com.pdc.lychee.planetdefenseoffice.utils.LogUtil;
-import com.pdc.lychee.planetdefenseoffice.utils.TimeUtil;
 import com.pdc.lychee.planetdefenseoffice.view.EmptyLayout;
 
 import java.text.SimpleDateFormat;
@@ -145,6 +142,16 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 showDeletingDialog();
                 break;
             case R.id.menu_repeat:
+                mPresenter.loadDP(mPresenter.getDate());
+                break;
+            case R.id.menu_add:
+                mState = STATE_REFRESHING;
+                refreshSwipe.setRefreshing(true);
+                refreshSwipe.setEnabled(false);
+
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                mPresenter.setDate(dateFormat.format(date));
                 mPresenter.loadDP(mPresenter.getDate());
                 break;
         }
