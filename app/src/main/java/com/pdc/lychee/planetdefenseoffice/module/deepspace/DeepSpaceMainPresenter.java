@@ -72,6 +72,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
             @Override
             public void onError(Throwable throwable) {
+                LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
                 if (throwable instanceof HttpException) {
                     HttpException httpException = (HttpException) throwable;
                     LogUtil.d("loadDP---onError：" + httpException.code());
@@ -80,7 +81,9 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     }
                     if (mIsRefresh) {
                         mDeepSpaceMainView.clearRecyclerView();
-                        start();
+                        setDate(TimeUtil.theDayBefore(getDate()));
+                        loadDP(getDate());
+//                        start();
                     }
                 } else if (throwable instanceof SSLException) {
                     LogUtil.d("loadDP---onError：SSL握手失败");
@@ -89,14 +92,15 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     }
                     if (mIsRefresh) {
                         mDeepSpaceMainView.clearRecyclerView();
-                        start();
+                        setDate(TimeUtil.theDayBefore(getDate()));
+                        loadDP(getDate());
+//                        start();
                     }
                 } else if (throwable instanceof XIAOHUException) {
                     XIAOHUException xiaohuException = (XIAOHUException) throwable;
                     LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
                     mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                 }
-                LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
                 mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
                 mIsRefresh = false;
                 mIsLoadMore = false;
@@ -199,9 +203,9 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         if (TextUtils.isEmpty(date)) {
             Date date1 = new Date();
-//            mDate = dateFormat.format(date1);
+            mDate = dateFormat.format(date1);
             //考虑到时差问题和接口，默认刷新日期为UTC-8日期前一天
-            mDate = TimeUtil.theDayBefore(dateFormat.format(date1));
+//            mDate = TimeUtil.theDayBefore(dateFormat.format(date1));
         } else {
             mDate = date;
         }
@@ -210,5 +214,15 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @Override
     public String getDate() {
         return mDate;
+    }
+
+    @Override
+    public void setmIsRefresh(boolean mIsRefresh) {
+        this.mIsRefresh = mIsRefresh;
+    }
+
+    @Override
+    public boolean getmIsRefresh() {
+        return mIsRefresh;
     }
 }

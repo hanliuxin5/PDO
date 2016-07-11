@@ -23,9 +23,11 @@ import butterknife.ButterKnife;
  */
 public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
 
+//    private SparseIntArray sparseIntArray;
 
     public DeepSpaceAdapter(Context context, List items, int mode) {
         super(context, items, mode);
+//        sparseIntArray = new SparseIntArray();
     }
 
     @Override
@@ -34,27 +36,22 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
     }
 
     @Override
-    protected void onBindDefaultViewHolder(RecyclerView.ViewHolder holder, int position) {
+    protected void onBindDefaultViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final APODViewHolder vh = (APODViewHolder) holder;
         DeepSpaceBean deepSpaceBean = (DeepSpaceBean) items.get(position);
         //照片
         if (deepSpaceBean.getMediaType() != null && deepSpaceBean.getMediaType().equals("image")) {
             vh.apodIvImg.setVisibility(View.VISIBLE);
-
             Picasso p = Picasso.with(mContext);
             p.setIndicatorsEnabled(true);
             p.load(deepSpaceBean.getUrl())
 //                    .placeholder(R.drawable.ic_track_changes_grey600_18dp)
                     .into(vh.apodIvImg);
-//            Glide.with(mContext)
-//                    .load(deepSpaceBean.getUrl())
-//                    .dontAnimate()
-//                    .into(vh.apodIvImg);
+
             LogUtil.d("正在加载照片：" + deepSpaceBean.getUrl());
         } else {
-            vh.apodIvImg.setVisibility(View.INVISIBLE);
+            vh.apodIvImg.setVisibility(View.GONE);
             LogUtil.d("不是照片：" + deepSpaceBean.getUrl());
-
         }
         //标题
         vh.apodTvTitle.setText(deepSpaceBean.getTitle());

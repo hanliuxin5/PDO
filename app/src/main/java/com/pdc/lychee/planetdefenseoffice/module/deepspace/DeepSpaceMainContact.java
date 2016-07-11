@@ -46,5 +46,9 @@ public interface DeepSpaceMainContact {
 
         void setDate(String date);
 
+        boolean getmIsRefresh();
+
+        void setmIsRefresh(boolean mIsRefresh);
+
     }
 }

@@ -15,9 +15,6 @@ public class Appcation extends Application {
     public static Context _context;
     public static Resources _resource;
 
-    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);//获取应用在系统中的最大内存分配
-    final int cacheSize = maxMemory / 8;    //分配1/8的应用内存作为缓存空间
-
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             sIsAtLeastGB = true;

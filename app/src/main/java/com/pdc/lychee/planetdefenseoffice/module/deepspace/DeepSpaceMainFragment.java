@@ -116,7 +116,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
         recyclerView.setLayoutManager(fixWrapContentLinearLayoutManager);
         recyclerView.setItemAnimator(defaultItemAnimator);
-        recyclerView.setItemViewCacheSize(5);
+//        recyclerView.setItemViewCacheSize(5);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(deepSpaceAdapter);
 
@@ -145,14 +145,13 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 mPresenter.loadDP(mPresenter.getDate());
                 break;
             case R.id.menu_add:
-                mState = STATE_REFRESHING;
-                refreshSwipe.setRefreshing(true);
-                refreshSwipe.setEnabled(false);
-
-                Date date = new Date();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                mPresenter.setDate(dateFormat.format(date));
-                mPresenter.loadDP(mPresenter.getDate());
+                mPresenter.onRefresh();
+//                mState = STATE_REFRESHING;
+//                refreshSwipe.setRefreshing(true);
+//                refreshSwipe.setEnabled(false);
+//                mPresenter.setmIsRefresh(true);
+//                mPresenter.setDate("");
+//                mPresenter.loadDP(mPresenter.getDate());
                 break;
         }
         return true;
