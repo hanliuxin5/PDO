@@ -179,23 +179,25 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
     @Override
     public void onLoadMore() {
-        mIsLoadMore = true;
-        mIsRefresh = false;
-        mDeepSpaceMainView.showLoadMore();
-        setDate(TimeUtil.theDayBefore(mDate));
-        LogUtil.d("准备加载更多：" + mDate);
-        loadDP(getDate());
+        if (mDeepSpaceMainView.canLoad()) {
+            mDeepSpaceMainView.showLoadMore();
+            mIsLoadMore = true;
+            mIsRefresh = false;
+            setDate(TimeUtil.theDayBefore(mDate));
+            LogUtil.d("准备加载更多：" + mDate);
+            loadDP(getDate());
+        }
     }
 
     @Override
     public void onRefresh() {
-        mIsRefresh = true;
-        mIsLoadMore = false;
-        mDeepSpaceMainView.showRefresh();
-
-        setDate("");
-        LogUtil.d("下拉刷新：" + getDate());
-        loadDP(getDate());
+        if (mDeepSpaceMainView.canLoad()) {
+            mIsRefresh = true;
+            mIsLoadMore = false;
+            setDate("");
+            LogUtil.d("下拉刷新：" + getDate());
+            loadDP(getDate());
+        }
     }
 
     @Override

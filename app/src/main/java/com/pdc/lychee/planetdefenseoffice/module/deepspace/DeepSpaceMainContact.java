@@ -34,6 +34,8 @@ public interface DeepSpaceMainContact {
         void showRefresh();
 
         void showReloadOnError();
+
+        boolean canLoad();
     }
 
     interface Presenter extends BasePresenter,

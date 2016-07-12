@@ -233,6 +233,25 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
+    public void showLoadMore() {
+        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOADING);
+    }
+
+    @Override
+    public void showRefresh() {
+        mState = STATE_REFRESHING;
+        refreshSwipe.setRefreshing(true);
+        refreshSwipe.setEnabled(false);
+    }
+
+    @Override
+    public boolean canLoad() {
+        if (mState == STATE_REFRESHING)
+            return false;
+        return true;
+    }
+
+    @Override
     public void showLoadFinished(int type) {
         refreshSwipe.setRefreshing(false);
         refreshSwipe.setEnabled(true);
@@ -251,22 +270,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         deepSpaceAdapter.notifyItemChanged(deepSpaceAdapter.getItemCount() - 1);
     }
 
-    @Override
-    public void showLoadMore() {
-        if (mState == STATE_REFRESHING) {
-            return;
-        }
-        deepSpaceAdapter.setState(DeepSpaceAdapter.STATE_LOADING);
-    }
-
-    @Override
-    public void showRefresh() {
-        if (mState == STATE_REFRESHING)
-            return;
-        mState = STATE_REFRESHING;
-        refreshSwipe.setRefreshing(true);
-        refreshSwipe.setEnabled(false);
-    }
 
     @Override
     public void showReloadOnError() {
