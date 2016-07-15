@@ -38,4 +38,6 @@ public class Appcation extends Application {
 //        LogUtil.d("Picasso---cacheSize:" + cacheSize);
         Picasso.setSingletonInstance(picasso);
     }
+
+
 }

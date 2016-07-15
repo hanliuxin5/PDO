@@ -64,6 +64,12 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        recyclerView.setAdapter(null);
+    }
+
+    @Override
     public void setPresenter(DeepSpaceMainContact.Presenter presenter) {
         if (presenter != null)
             mPresenter = presenter;
