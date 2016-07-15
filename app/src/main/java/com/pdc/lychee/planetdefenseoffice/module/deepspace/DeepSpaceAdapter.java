@@ -47,7 +47,6 @@ public class DeepSpaceAdapter extends BaseRecyclerViewAdapter {
             p.load(deepSpaceBean.getUrl())
 //                    .placeholder(R.drawable.ic_track_changes_grey600_18dp)
                     .into(vh.apodIvImg);
-
             LogUtil.d("正在加载照片：" + deepSpaceBean.getUrl());
         } else {
             vh.apodIvImg.setVisibility(View.GONE);

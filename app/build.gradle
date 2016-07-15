@@ -35,6 +35,11 @@ android {
 
         }
     }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/java-gen']
+        }
+    }
 }
 
 dependencies {
@@ -67,4 +72,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-scalars:2.0.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+    //greendao
+    compile 'de.greenrobot:greendao:2.1.0'
+
 }

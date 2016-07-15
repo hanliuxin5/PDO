@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.pdc.lychee.planetdefenseoffice.module.deepspace.data.local;
+package com.example;
 
 /**
  * The contract used for the db to save the tasks locally.
  */
 public final class DeepSpaceEntry {
-    public static final String TABLE_NAME = "deepspace";
+    public static final String TABLE_NAME = "DP";
     public static final String COLUMN_NAME_DATE = "date";
     public static final String COLUMN_NAME_EXPLANATION = "explanation";
     public static final String COLUMN_NAME_HDURL = "hdurl";
