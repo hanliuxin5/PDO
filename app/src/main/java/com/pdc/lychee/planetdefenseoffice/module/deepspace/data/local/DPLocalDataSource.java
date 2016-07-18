@@ -24,12 +24,9 @@ import rx.Subscriber;
  */
 public class DPLocalDataSource {
     private volatile static DPLocalDataSource INSTANCE;
-
-    //    private DPDBHelper mDbHelper;
     private DPDao dpDao;
 
     private DPLocalDataSource(Context context) {
-//        mDbHelper = new DPDBHelper(context);
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "PDO.db", null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
@@ -106,35 +103,16 @@ public class DPLocalDataSource {
             deepSpaceBean.setUrl(dp.getUrl());
             deepSpaceBean.setMediaType(dp.getMedia_type());
         }
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//
-//        Cursor cursor = db.rawQuery("SELECT * FROM " +
-//                DeepSpaceEntry.TABLE_NAME +
-//                " where " + DeepSpaceEntry.COLUMN_NAME_DATE + "=?", new String[]{String.valueOf(mDate)});
-//
-//        if (cursor.moveToNext()) {
-//            deepSpaceBean = new DeepSpaceBean();
-//            String date = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_DATE));
-//            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
-//            String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
-//            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
-//            String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
-//            String mediatype = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_MEDIATYPE));
-//            deepSpaceBean.setDate(date);
-//            deepSpaceBean.setExplanation(explanation);
-//            deepSpaceBean.setTitle(title);
-//            deepSpaceBean.setHdurl(hdurl);
-//            deepSpaceBean.setUrl(url);
-//            deepSpaceBean.setMediaType(mediatype);
-//        }
-//        cursor.close();
-//        db.close();
+
         return deepSpaceBean;
     }
 
     private DeepSpaceBean queryDP() throws Exception {
         DeepSpaceBean deepSpaceBean = null;
-        List<DP> dps = dpDao.loadAll();
+        List<DP> dps = dpDao.queryBuilder()
+                .orderDesc(DPDao.Properties.Date)
+                .limit(1)
+                .list();
         if (dps != null && dps.size() > 0) {
             deepSpaceBean = new DeepSpaceBean();
             DP dp = dps.get(0);
@@ -145,30 +123,6 @@ public class DPLocalDataSource {
             deepSpaceBean.setUrl(dp.getUrl());
             deepSpaceBean.setMediaType(dp.getMedia_type());
         }
-//        DeepSpaceBean deepSpaceBean = null;
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//
-//        Cursor cursor = db.rawQuery("SELECT * FROM " + DeepSpaceEntry.TABLE_NAME +
-//                        " ORDER BY " + DeepSpaceEntry.COLUMN_NAME_DATE + " DESC LIMIT " + 1,
-//                null);
-//
-//        if (cursor.moveToFirst()) {
-//            deepSpaceBean = new DeepSpaceBean();
-//            String date = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_DATE));
-//            String explanation = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_EXPLANATION));
-//            String title = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_TITLE));
-//            String hdurl = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_HDURL));
-//            String url = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_URL));
-//            String mediatype = cursor.getString(cursor.getColumnIndex(DeepSpaceEntry.COLUMN_NAME_MEDIATYPE));
-//            deepSpaceBean.setDate(date);
-//            deepSpaceBean.setExplanation(explanation);
-//            deepSpaceBean.setTitle(title);
-//            deepSpaceBean.setHdurl(hdurl);
-//            deepSpaceBean.setUrl(url);
-//            deepSpaceBean.setMediaType(mediatype);
-//        }
-//        cursor.close();
-//        db.close();
         return deepSpaceBean;
     }
 
@@ -192,20 +146,6 @@ public class DPLocalDataSource {
     public DeepSpaceBean insertDP(DeepSpaceBean dsp) {
         DP dp = new DP(null, dsp.getDate(), dsp.getExplanation(), dsp.getHdurl(), dsp.getTitle(), dsp.getUrl(), dsp.getMediaType());
         dpDao.insertOrReplace(dp);
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//        db.execSQL("insert into " + DeepSpaceEntry.TABLE_NAME +
-//                        "(" + DeepSpaceEntry.COLUMN_NAME_DATE +
-//                        ", " + DeepSpaceEntry.COLUMN_NAME_EXPLANATION +
-//                        ", " + DeepSpaceEntry.COLUMN_NAME_HDURL +
-//                        ", " + DeepSpaceEntry.COLUMN_NAME_TITLE +
-//                        ", " + DeepSpaceEntry.COLUMN_NAME_URL +
-//                        ", " + DeepSpaceEntry.COLUMN_NAME_MEDIATYPE +
-//                        ")" +
-//                        " values(?,?,?,?,?,?)",
-//                new Object[]{deepSpaceBean.getDate(), deepSpaceBean.getExplanation(),
-//                        deepSpaceBean.getHdurl(), deepSpaceBean.getTitle(),
-//                        deepSpaceBean.getUrl(), deepSpaceBean.getMediaType()});
-//        db.close();
         return dsp;
     }
 
@@ -216,14 +156,12 @@ public class DPLocalDataSource {
                     public void call(Subscriber<? super Integer> subscriber) {
                         Integer count = 0;
                         try {
-//                            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//                            count = db.delete(DeepSpaceEntry.TABLE_NAME, null, null);
 
                             dpDao.deleteAll();
 
                             subscriber.onNext(count);
                             subscriber.onCompleted();
-//                            db.close();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_DELETE);
@@ -242,10 +180,6 @@ public class DPLocalDataSource {
                     public void call(Subscriber<? super Integer> subscriber) {
                         Integer count = 0;
                         try {
-//                            SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//                            count = db.delete(DeepSpaceEntry.TABLE_NAME,
-//                                    DeepSpaceEntry.COLUMN_NAME_DATE + "=?",
-//                                    new String[]{String.valueOf(date)});
 
                             QueryBuilder<DP> qb = dpDao.queryBuilder();
                             DeleteQuery<DP> bd = qb.where(DPDao.Properties.Date.eq(date)).buildDelete();
@@ -254,7 +188,6 @@ public class DPLocalDataSource {
                             subscriber.onNext(count);
                             subscriber.onCompleted();
 
-//                            db.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                             XIAOHUException xiaohuException = new XIAOHUException(e, XIAOHUException.DB_DELETE);

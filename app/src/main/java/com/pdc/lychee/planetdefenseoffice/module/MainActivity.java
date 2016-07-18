@@ -70,7 +70,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     @Override
     public void showOffice(int resId) {
         if (resId == R.id.nav_deep) {
-            mainPresenter.start();
             DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
             if (deepSpaceMainFragment == null) {
                 popTo(DeepSpaceMainFragment.class, false, new Runnable() {

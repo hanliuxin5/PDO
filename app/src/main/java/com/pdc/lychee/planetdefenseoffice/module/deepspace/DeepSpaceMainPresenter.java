@@ -192,6 +192,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @Override
     public void onRefresh() {
         if (mDeepSpaceMainView.canLoad()) {
+            mDeepSpaceMainView.showRefresh();
             mIsRefresh = true;
             mIsLoadMore = false;
             setDate("");
