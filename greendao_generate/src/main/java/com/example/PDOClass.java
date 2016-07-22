@@ -9,6 +9,8 @@ public class PDOClass {
         Schema schema = new Schema(1, "pdo.deepspace");
         addDP(schema);
         new DaoGenerator().generateAll(schema, "./app/src/main/java-gen");
+
+
     }
 
 
