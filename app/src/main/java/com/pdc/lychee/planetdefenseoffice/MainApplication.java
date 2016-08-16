@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by lychee on 2016/4/7.
  */
-public class Appcation extends Application {
+public class MainApplication extends Application {
     public static boolean sIsAtLeastGB;
     public static Context _context;
     public static Resources _resource;

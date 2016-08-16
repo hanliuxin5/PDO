@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.pdc.lychee.planetdefenseoffice.Appcation;
+import com.pdc.lychee.planetdefenseoffice.MainApplication;
 
 /**
  * Created by lychee on 2016/6/21.
@@ -23,7 +23,7 @@ public class ToastUtil {
                 mToast.cancel();
             }
             String text = (String) msg.obj;
-            mToast = Toast.makeText(Appcation._context, text, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(MainApplication._context, text, Toast.LENGTH_SHORT);
             mToast.show();
         }
     };

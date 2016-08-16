@@ -120,6 +120,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
         DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
         deepSpaceAdapter.setOnLoadMoreListener(mPresenter);
 
+        fixWrapContentLinearLayoutManager.setExtraLayoutSpace(1280);
         recyclerView.setLayoutManager(fixWrapContentLinearLayoutManager);
         recyclerView.setItemAnimator(defaultItemAnimator);
 //        recyclerView.setItemViewCacheSize(5);
@@ -152,12 +153,6 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
                 break;
             case R.id.menu_add:
                 mPresenter.onRefresh();
-//                mState = STATE_REFRESHING;
-//                refreshSwipe.setRefreshing(true);
-//                refreshSwipe.setEnabled(false);
-//                mPresenter.setmIsRefresh(true);
-//                mPresenter.setDate("");
-//                mPresenter.loadDP(mPresenter.getDate());
                 break;
         }
         return true;

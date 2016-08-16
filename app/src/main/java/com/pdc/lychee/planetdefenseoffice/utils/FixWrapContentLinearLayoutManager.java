@@ -9,6 +9,10 @@ import android.util.AttributeSet;
  * Created by lychee on 2016/5/16.
  */
 public class FixWrapContentLinearLayoutManager extends LinearLayoutManager {
+    private static final int DEFAULT_EXTRA_LAYOUT_SPACE = 600;
+
+    private int extraLayoutSpace = -1;
+
     public FixWrapContentLinearLayoutManager(Context context) {
         super(context);
     }
@@ -29,5 +33,17 @@ public class FixWrapContentLinearLayoutManager extends LinearLayoutManager {
 //            e.printStackTrace();
             LogUtil.e("onLayoutChildren");
         }
+    }
+
+    public void setExtraLayoutSpace(int extraLayoutSpace) {
+        this.extraLayoutSpace = extraLayoutSpace;
+    }
+
+    @Override
+    protected int getExtraLayoutSpace(RecyclerView.State state) {
+        if (extraLayoutSpace > 0) {
+            return extraLayoutSpace;
+        }
+        return DEFAULT_EXTRA_LAYOUT_SPACE;
     }
 }
