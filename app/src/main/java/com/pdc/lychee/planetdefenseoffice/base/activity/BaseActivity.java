@@ -25,6 +25,7 @@ public abstract class BaseActivity extends BaseRxActivity {
         setContentView(setContentView());
     }
 
+    @Override
     public void onResume() {
         super.onResume();
     }
@@ -39,6 +40,7 @@ public abstract class BaseActivity extends BaseRxActivity {
         }
     }
 
+    @Override
     public void onStop() {
         super.onStop();
     }

@@ -3,7 +3,7 @@ apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "com.pdc.lychee.planetdefenseoffice"
@@ -36,11 +36,7 @@ android {
 
         }
     }
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java', 'src/main/java-gen']
-        }
-    }
+
 }
 
 greendao {
@@ -66,8 +62,8 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.1.1'
     compile 'com.google.code.gson:gson:2.6.2'
     //rx
-    compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
     compile 'com.trello:rxlifecycle:0.5.0'
     compile 'com.trello:rxlifecycle-components:0.5.0'
     //http

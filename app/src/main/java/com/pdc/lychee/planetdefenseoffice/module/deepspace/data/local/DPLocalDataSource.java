@@ -53,7 +53,7 @@ public class DPLocalDataSource {
                 .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
                     public void call(Subscriber<? super DeepSpaceBean> subscriber) {
-                        DeepSpaceBean deepSpaceBean = null;
+                        DeepSpaceBean deepSpaceBean;
                         try {
                             deepSpaceBean = queryDP(date);
                             if (deepSpaceBean != null) {
@@ -74,7 +74,7 @@ public class DPLocalDataSource {
                 .create(new Observable.OnSubscribe<DeepSpaceBean>() {
                     @Override
                     public void call(Subscriber<? super DeepSpaceBean> subscriber) {
-                        DeepSpaceBean deepSpaceBean = null;
+                        DeepSpaceBean deepSpaceBean;
                         try {
                             deepSpaceBean = queryDP();
                             if (deepSpaceBean != null) {
@@ -91,7 +91,7 @@ public class DPLocalDataSource {
                 });
     }
 
-    private DeepSpaceBean queryDP(String mDate) throws Exception {
+    private DeepSpaceBean queryDP(String mDate)  {
         QueryBuilder<DeepSpace> qb = dpDao.queryBuilder();
         DeepSpaceBean deepSpaceBean = null;
         Query<DeepSpace> build = qb.where(DeepSpaceDao.Properties.Date.eq(mDate)).build();
@@ -110,7 +110,7 @@ public class DPLocalDataSource {
         return deepSpaceBean;
     }
 
-    private DeepSpaceBean queryDP() throws Exception {
+    private DeepSpaceBean queryDP()  {
         DeepSpaceBean deepSpaceBean = null;
         List<DeepSpace> dps = dpDao.queryBuilder()
                 .orderDesc(DeepSpaceDao.Properties.Date)

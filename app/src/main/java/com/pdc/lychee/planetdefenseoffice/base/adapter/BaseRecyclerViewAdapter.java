@@ -98,8 +98,7 @@ public abstract class BaseRecyclerViewAdapter<T> extends RecyclerView.Adapter {
             case VIEW_TYPE_FOOTER:
                 return new FooterViewHolder(mInflater.inflate(R.layout.base_item_footer, parent, false));
             default:
-                final RecyclerView.ViewHolder holder = onCreateDefaultViewHolder(parent, viewType);
-                return holder;
+                return onCreateDefaultViewHolder(parent, viewType);
         }
     }
 

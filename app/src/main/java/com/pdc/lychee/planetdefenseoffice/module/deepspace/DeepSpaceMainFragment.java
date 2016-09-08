@@ -175,7 +175,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
     @Override
     public void removeDP(String date) {
-        DeepSpaceBean deepSpaceBean = null;
+        DeepSpaceBean deepSpaceBean;
         boolean isExist = false;
         for (int i = 0; i < deepSpaceAdapter.getItems().size(); i++) {
             deepSpaceBean = (DeepSpaceBean) deepSpaceAdapter.getItem(i);
@@ -247,9 +247,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
 
     @Override
     public boolean canLoad() {
-        if (mState == STATE_REFRESHING)
-            return false;
-        return true;
+        return mState != STATE_REFRESHING;
     }
 
     @Override

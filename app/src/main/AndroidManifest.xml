@@ -23,16 +23,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".z_test.ScrollingActivity"
-            android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme">
-
-        </activity>
-        <activity
-            android:name=".z_test.ScrollingActivity2"
-            android:label="@string/title_activity_scrolling2"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
