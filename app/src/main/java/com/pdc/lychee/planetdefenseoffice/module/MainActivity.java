@@ -1,5 +1,7 @@
 package com.pdc.lychee.planetdefenseoffice.module;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import com.pdc.lychee.planetdefenseoffice.R;
 import com.pdc.lychee.planetdefenseoffice.base.activity.BaseActivity;
 import com.pdc.lychee.planetdefenseoffice.module.deepspace.DeepSpaceMainFragment;
+import com.pdc.lychee.planetdefenseoffice.module.mars.MarsMainFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,6 +40,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
         return R.layout.activity_main;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,29 +71,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
             mainPresenter = presenter;
     }
 
-    @Override
-    public void showOffice(int resId) {
-        if (resId == R.id.nav_deep) {
-            DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
-            if (deepSpaceMainFragment == null) {
-                popTo(DeepSpaceMainFragment.class, false, new Runnable() {
-                    @Override
-                    public void run() {
-                        start(DeepSpaceMainFragment.newInstance());
-                    }
-                });
-            } else {
-                // 如果已经在栈内,则以SingleTask模式start
-                start(deepSpaceMainFragment, SupportFragment.SINGLETASK);
-            }
-        }
-    }
-
-
-    @Override
-    public void showPopUpMenu() {
-
-    }
 
     @Override
     public void openDrawer() {
@@ -110,7 +91,27 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
     public boolean onNavigationItemSelected(MenuItem item) {
         drawerLayout.closeDrawer(GravityCompat.START);
         int id = item.getItemId();
-        showOffice(id);
+        switch (id) {
+            case R.id.nav_deep:
+                DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
+                start(deepSpaceMainFragment, SupportFragment.SINGLETASK);
+
+                break;
+            case R.id.nav_mars:
+                MarsMainFragment marsMainFragment = findFragment(MarsMainFragment.class);
+                if (marsMainFragment == null) {
+                    popTo(DeepSpaceMainFragment.class, false, new Runnable() {
+                        @Override
+                        public void run() {
+                            start(MarsMainFragment.newInstance());
+                        }
+                    });
+                } else {
+                    // 如果已经在栈内,则以SingleTask模式start
+                    start(marsMainFragment, SupportFragment.SINGLETASK);
+                }
+                break;
+        }
         return true;
     }
 }

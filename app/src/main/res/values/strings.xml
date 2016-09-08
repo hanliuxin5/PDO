@@ -17,14 +17,18 @@
     <string name="refreshing">刷新中</string>
     <!--深空探索-->
     <string name="nasa_dp">NASA</string>
+    <!-- 火星前瞻 -->
+    <string name="mars_title">火星前瞻</string>
+    <string name="mars_rover_in_service">服役中的火星车</string>
+    <string name="mars_rover_retired">已退役的火星车</string>
 
     <!--test_string-->
     <string name="string_test">地球的未来掌握在你们手中 —— 大笔哥"</string>
     <string name="menu_delete_test">删除</string>
     <string name="menu_repeat_test">修复加载</string>
     <string name="menu_add_test">主动加载</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="large_text">
+
+ <string name="large_text">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
@@ -113,7 +117,4 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_scrolling2">ScrollingActivity2</string>
-
 </resources>

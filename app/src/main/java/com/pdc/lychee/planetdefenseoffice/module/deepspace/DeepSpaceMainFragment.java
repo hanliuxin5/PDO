@@ -64,16 +64,17 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     }
 
     @Override
+    public void setPresenter(DeepSpaceMainContact.Presenter presenter) {
+        if (presenter != null)
+            mPresenter = presenter;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         recyclerView.setAdapter(null);
     }
 
-    @Override
-    public void setPresenter(DeepSpaceMainContact.Presenter presenter) {
-        if (presenter != null)
-            mPresenter = presenter;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class DeepSpaceMainFragment extends BaseFragment implements DeepSpaceMain
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_deepspace, container, false);
         ButterKnife.bind(this, view);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
