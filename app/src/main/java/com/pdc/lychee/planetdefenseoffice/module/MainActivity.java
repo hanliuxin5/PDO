@@ -1,7 +1,5 @@
 package com.pdc.lychee.planetdefenseoffice.module;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,7 +38,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
         return R.layout.activity_main;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +92,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Nav
             case R.id.nav_deep:
                 DeepSpaceMainFragment deepSpaceMainFragment = findFragment(DeepSpaceMainFragment.class);
                 start(deepSpaceMainFragment, SupportFragment.SINGLETASK);
-
                 break;
             case R.id.nav_mars:
                 MarsMainFragment marsMainFragment = findFragment(MarsMainFragment.class);

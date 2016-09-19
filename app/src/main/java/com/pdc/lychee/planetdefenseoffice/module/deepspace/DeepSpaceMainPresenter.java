@@ -48,7 +48,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
             public void onError(Throwable throwable) {
                 if (throwable instanceof XIAOHUException) {
                     XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                    LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                    LogUtil.d("getDP---onError：" + xiaohuException.getCode());
                     mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                 }
                 mDeepSpaceMainView.showLoadFinished(EmptyLayout.EMPTY_DATA);
@@ -72,10 +72,10 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 
             @Override
             public void onError(Throwable throwable) {
-                LogUtil.d("loadDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
+                LogUtil.d("getDP---onError：" + throwable.getMessage() + ",出错date：" + getDate());
                 if (throwable instanceof HttpException) {
                     HttpException httpException = (HttpException) throwable;
-                    LogUtil.d("loadDP---onError：" + httpException.code());
+                    LogUtil.d("getDP---onError：" + httpException.code());
                     if (mIsLoadMore) {
                         mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                     }
@@ -86,7 +86,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
 //                        start();
                     }
                 } else if (throwable instanceof SSLException) {
-                    LogUtil.d("loadDP---onError：SSL握手失败");
+                    LogUtil.d("getDP---onError：SSL握手失败");
                     if (mIsLoadMore) {
                         mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                     }
@@ -98,7 +98,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
                     }
                 } else if (throwable instanceof XIAOHUException) {
                     XIAOHUException xiaohuException = (XIAOHUException) throwable;
-                    LogUtil.d("loadDP---onError：" + xiaohuException.getCode());
+                    LogUtil.d("getDP---onError：" + xiaohuException.getCode());
                     mDeepSpaceMainView.setFooterView(DeepSpaceAdapter.STATE_LOAD_ERROR);
                 }
                 mDeepSpaceMainView.showLoadFinished(EmptyLayout.LOAD_FAILED);
@@ -125,7 +125,7 @@ public class DeepSpaceMainPresenter implements DeepSpaceMainContact.Presenter {
     @SuppressWarnings("unchecked")
     @Override
     public void start() {
-        mDpRepository.loadDP()
+        mDpRepository.getDP()
                 .compose(((DeepSpaceMainFragment) mDeepSpaceMainView).bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .doOnSubscribe(new Action0() {
                     @Override

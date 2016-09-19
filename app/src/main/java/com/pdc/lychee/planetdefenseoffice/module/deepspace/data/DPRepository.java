@@ -41,7 +41,7 @@ public class DPRepository implements DPDataSource {
     }
 
     @Override
-    public Observable loadDP() {
+    public Observable getDP() {
         return mDPsLocalDataSource.getDP()
                 .subscribeOn(Schedulers.io());
     }

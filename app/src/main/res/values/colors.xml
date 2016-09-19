@@ -12,7 +12,7 @@
     <color name="swipe_refresh_third">#ffff4444</color>
     <color name="swipe_refresh_four">#ffaa66cc</color>
     <!--font color-->
-    <color name="font_black">#000</color>
+    <color name="font_black">#000000</color>
     <color name="font_black2">#302e2e</color>
     <color name="font_gray">#797979</color>
     <color name="font_white">#ffffff</color>

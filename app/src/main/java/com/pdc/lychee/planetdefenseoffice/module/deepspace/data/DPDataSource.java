@@ -17,11 +17,11 @@ public interface DPDataSource {
     Observable getDP(String date);
 
     /**
-     * 初始化界面加载
+     * 获取天文图
      *
      * @return
      */
-    Observable loadDP();
+    Observable getDP();
 
     void saveDP(DeepSpaceBean deepSpaceBean);
 
